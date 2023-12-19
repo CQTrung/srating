@@ -15,6 +15,7 @@ install:
 	go install github.com/swaggo/swag/cmd/swag@latest
 	go install github.com/securego/gosec/v2/cmd/gosec@latest
 	go install github.com/go-critic/go-critic/cmd/gocritic@latest
+	go install mvdan.cc/gofumpt@latest
 push:
 	@git fetch origin dev
 	@git add .

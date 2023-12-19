@@ -42,8 +42,8 @@ type User struct {
 	Avatar       *Media      `json:"media" gorm:"many2many:user_media;"`
 	DepartmentID uint        `json:"department_id" gorm:"department_id" validate:"required"`
 	Feedbacks    []*Feedback `json:"feedbacks" gorm:"foreignKey:UserID"`
-	Role         Role        `json:"role" form:"role" gorm:"column:role"`
-	Status       Status      `json:"status" form:"status" gorm:"column:status"`
+	Role         Role        `json:"role" gorm:"column:role"`
+	Status       Status      `json:"status" gorm:"column:status"`
 }
 
 type UserService interface {

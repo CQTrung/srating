@@ -22,9 +22,9 @@ func NewPostgresDatabase(env *Env) *gorm.DB {
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN: dsn,
 	}), &gorm.Config{
-		// SkipDefaultTransaction: true,
-		// PrepareStmt:            true,
-		Logger: logger.Default.LogMode(logger.Error),
+		SkipDefaultTransaction: true,
+		PrepareStmt:            true,
+		Logger:                 logger.Default.LogMode(logger.Error),
 	})
 	if err != nil {
 		utils.LogFatal(err, "Failed to connect to database")

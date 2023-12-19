@@ -108,12 +108,12 @@ func (uu *authService) Login(c context.Context, input *domain.LoginRequest) (*do
 
 	user, err := uu.userRepository.GetUserByUsername(ctx, input.Username)
 	if err != nil {
-		utils.LogError(err, "User not found")
+		utils.LogError(err, "Username or password is incorrect")
 		return nil, rest.ErrInvalidCredentials
 	}
 	// Verify the password
 	if err := utils.CompareHashAndPassword(user.Password, input.Password); err != nil {
-		utils.LogError(err, "Failed to verify password")
+		utils.LogError(err, "Username or password is incorrect")
 		return nil, rest.ErrInvalidCredentials
 	}
 	return user, nil
@@ -134,10 +134,6 @@ func (uu *authService) ExtractIDFromToken(ctx context.Context, token, accessToke
 	rawID, err := utils.ExtractIDFromToken(token, accessTokenSecret)
 	if err != nil {
 		utils.LogError(err, "Failed to extract user ID from access token")
-		return 0, err
-	}
-	if err != nil {
-		utils.LogError(err, "Failed to extract user ID from refresh token")
 		return 0, err
 	}
 	userID, err := strconv.Atoi(rawID)

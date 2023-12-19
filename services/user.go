@@ -36,12 +36,10 @@ func (uu *userService) GetUserByID(c context.Context, id uint) (*domain.User, er
 func (uu *userService) ChangeStatus(c context.Context, id uint, status domain.Status) error {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	err := uu.userRepository.ChangeStatus(ctx, id, status)
-	if err != nil {
+	if err := uu.userRepository.ChangeStatus(ctx, id, status); err != nil {
 		utils.LogError(err, "Failed to change status")
 		return err
 	}
-
 	return nil
 }
 

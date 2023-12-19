@@ -6,7 +6,7 @@ import (
 
 type Department struct {
 	HardModel
-	Name  string  `json:"name" form:"name"`
+	Name  string  `json:"name" gorm:"name"`
 	Users []*User `json:"users" gorm:"foreignKey:DepartmentID"`
 }
 
