@@ -1,0 +1,253 @@
+definitions:
+  domain.Feedback:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      level:
+        $ref: '#/definitions/domain.Level'
+      note:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - level
+    - user_id
+    type: object
+  domain.Level:
+    enum:
+    - 1
+    - 2
+    - 3
+    - 4
+    type: integer
+    x-enum-varnames:
+    - VeryGood
+    - Good
+    - Normal
+    - Bad
+  domain.LoginRequest:
+    properties:
+      is_remember_me:
+        type: boolean
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  domain.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      refresh_token:
+        type: string
+      role:
+        $ref: '#/definitions/domain.Role'
+      username:
+        type: string
+    type: object
+  domain.Media:
+    properties:
+      created_at:
+        type: string
+      filename:
+        description: Type     string `gorm:"column:type" json:"type"`
+        type: string
+      id:
+        type: integer
+      updated_at:
+        type: string
+      url:
+        type: string
+    type: object
+  domain.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  domain.RefreshTokenResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  domain.Role:
+    enum:
+    - employee
+    - admin
+    - manager
+    type: string
+    x-enum-varnames:
+    - EmployeeRole
+    - AdminRole
+    - ManagerRole
+  domain.Status:
+    enum:
+    - 1
+    - 0
+    type: integer
+    x-enum-varnames:
+    - ActiveStatus
+    - InActiveStatus
+  domain.User:
+    properties:
+      created_at:
+        type: string
+      department_id:
+        type: integer
+      email:
+        type: string
+      feedbacks:
+        items:
+          $ref: '#/definitions/domain.Feedback'
+        type: array
+      full_name:
+        type: string
+      id:
+        type: integer
+      media:
+        $ref: '#/definitions/domain.Media'
+      password:
+        type: string
+      phone:
+        type: string
+      role:
+        $ref: '#/definitions/domain.Role'
+      short_name:
+        type: string
+      status:
+        $ref: '#/definitions/domain.Status'
+      updated_at:
+        type: string
+      username:
+        type: string
+    required:
+    - department_id
+    - email
+    - full_name
+    - password
+    - phone
+    - short_name
+    - username
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+info:
+  contact: {}
+paths:
+  /admin/auth/refresh:
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RefreshTokenRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.RefreshTokenResponse'
+      summary: Refresh token
+      tags:
+      - user
+  /admin/media:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get all media
+      tags:
+      - media
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Upload media
+      tags:
+      - media
+  /auth/login:
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.LoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LoginResponse'
+      summary: Login user
+      tags:
+      - user
+  /auth/register:
+    post:
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Register user
+      tags:
+      - user
+  /users:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get user detail
+      tags:
+      - user
+  /users/employees:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get all employee
+      tags:
+      - user
+securityDefinitions:
+  BearerAuth:
+    type: basic
+swagger: "2.0"
