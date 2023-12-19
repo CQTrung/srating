@@ -23,6 +23,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 	public.NewStatusRouter(env, timeout, publicRouter, db, rd, asyn)
 	public.NewAuthRouter(env, timeout, publicRouter, db, rd, asyn)
 	public.NewMediaRouter(env, timeout, publicRouter, db, rd, asyn)
+	public.NewFeedbackRouter(env, timeout, publicRouter, db, rd, asyn)
 
 	protectedRouter := apiV1Router.Group("")
 	adminAPIRouter := protectedRouter.Group("/")
@@ -31,4 +32,6 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 	adminAPIRouter.Use(middlewares.AdminAuthMiddleware(env.AccessTokenSecret))
 	admin.NewUserRouter(env, timeout, adminAPIRouter, db, rd, asyn)
 	admin.NewMediaRouter(env, timeout, adminAPIRouter, db, rd, asyn)
+	admin.NewFeedbackRouter(env, timeout, adminAPIRouter, db, rd, asyn)
+	admin.NewDashboardRouter(env, timeout, adminAPIRouter, db, rd, asyn)
 }

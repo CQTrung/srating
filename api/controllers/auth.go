@@ -16,7 +16,7 @@ type AuthController struct {
 
 // Register
 // @Router /auth/register [post]
-// @Tags user
+// @Tags auth
 // @Summary Register user
 // @Param request body domain.User true "request"
 // @Success 200 {object} string
@@ -31,7 +31,7 @@ func (uc *AuthController) Register(c *gin.Context) {
 
 // Login
 // @Router /auth/login [post]
-// @Tags user
+// @Tags auth
 // @Summary Login user
 // @Param payload body domain.LoginRequest true "payload"
 // @Success 200 {object} domain.LoginResponse
@@ -70,8 +70,8 @@ func (uc *AuthController) Login(c *gin.Context) {
 }
 
 // RefreshToken
-// @Router /admin/auth/refresh [post]
-// @Tags user
+// @Router /auth/refresh [post]
+// @Tags auth
 // @Summary Refresh token
 // @Param payload body domain.RefreshTokenRequest true "payload"
 // @Success 200 {object} domain.RefreshTokenResponse

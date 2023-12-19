@@ -55,3 +55,37 @@ func (uu *userService) GetAllEmployee(c context.Context) ([]*domain.User, error)
 	}
 	return users, nil
 }
+
+func (uu *userService) CountUserByRole(c context.Context) (map[string]int64, error) {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+	users, err := uu.userRepository.CountUserByRole(ctx)
+	if err != nil {
+		utils.LogError(err, "Failed to get all employee")
+		return nil, err
+	}
+	mapResult := make(map[string]int64, 2)
+
+	for _, user := range users {
+		mapResult[user.Role] = int64(user.Count)
+	}
+	if _, ok := mapResult[string(domain.EmployeeRole)]; !ok {
+		mapResult[string(domain.EmployeeRole)] = 0
+	}
+	if _, ok := mapResult[string(domain.ManagerRole)]; !ok {
+		mapResult[string(domain.ManagerRole)] = 0
+	}
+
+	return mapResult, nil
+}
+
+func (uu *userService) CountTotalField(c context.Context) (int64, error) {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+	count, err := uu.userRepository.CountTotalField(ctx)
+	if err != nil {
+		utils.LogError(err, "Failed to get total field")
+		return 0, err
+	}
+	return count, nil
+}

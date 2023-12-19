@@ -54,3 +54,20 @@ func (r *userRepository) GetAllEmployee(c context.Context) ([]*domain.User, erro
 	}
 	return users, nil
 }
+
+func (r *userRepository) CountUserByRole(c context.Context) ([]*domain.GetUserByRoleResponse, error) {
+	result := []*domain.GetUserByRoleResponse{}
+	query := r.GetDB(c)
+	if err := query.Model(&domain.User{}).Select("role, count(*)").Group("role").Scan(&result).Error; err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (r *userRepository) CountTotalField(c context.Context) (int64, error) {
+	var count int64
+	if err := r.GetDB(c).Model(&domain.User{}).Select("count(distinct field)").Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}

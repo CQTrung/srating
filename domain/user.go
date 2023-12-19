@@ -50,6 +50,8 @@ type UserService interface {
 	GetUserByID(c context.Context, id uint) (*User, error)
 	ChangeStatus(c context.Context, id uint, status Status) error
 	GetAllEmployee(c context.Context) ([]*User, error)
+	CountUserByRole(c context.Context) (map[string]int64, error)
+	CountTotalField(c context.Context) (int64, error)
 }
 type UserRepository interface {
 	UpdateUser(c context.Context, user *User) error
@@ -57,6 +59,8 @@ type UserRepository interface {
 	GetUserByUsername(c context.Context, username string) (*User, error)
 	ChangeStatus(c context.Context, id uint, status Status) error
 	GetAllEmployee(c context.Context) ([]*User, error)
+	CountUserByRole(c context.Context) ([]*GetUserByRoleResponse, error)
+	CountTotalField(c context.Context) (int64, error)
 }
 type GetUserByIDResponse struct {
 	ID           uint   `json:"id"`
@@ -73,4 +77,8 @@ type GetUserByIDResponse struct {
 }
 type ChangeStatusRequest struct {
 	Status Status `json:"status"`
+}
+type GetUserByRoleResponse struct {
+	Role  string `json:"role"`
+	Count int    `json:"count"`
 }

@@ -114,6 +114,8 @@ definitions:
         items:
           $ref: '#/definitions/domain.Feedback'
         type: array
+      field:
+        type: string
       full_name:
         type: string
       id:
@@ -137,6 +139,7 @@ definitions:
     required:
     - department_id
     - email
+    - field
     - full_name
     - password
     - phone
@@ -149,23 +152,6 @@ externalDocs:
 info:
   contact: {}
 paths:
-  /admin/auth/refresh:
-    post:
-      parameters:
-      - description: payload
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/domain.RefreshTokenRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.RefreshTokenResponse'
-      summary: Refresh token
-      tags:
-      - user
   /admin/media:
     get:
       responses:
@@ -205,7 +191,24 @@ paths:
             $ref: '#/definitions/domain.LoginResponse'
       summary: Login user
       tags:
-      - user
+      - auth
+  /auth/refresh:
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RefreshTokenRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.RefreshTokenResponse'
+      summary: Refresh token
+      tags:
+      - auth
   /auth/register:
     post:
       parameters:
@@ -222,7 +225,78 @@ paths:
             type: string
       summary: Register user
       tags:
-      - user
+      - auth
+  /dashboard:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - dashboard
+  /feedbacks:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get all feedback
+      tags:
+      - feedback
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Feedback'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Create feedback
+      tags:
+      - feedback
+    put:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Feedback'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update feedback
+      tags:
+      - feedback
+  /feedbacks/:id:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get feedback by detail
+      tags:
+      - feedback
   /users:
     get:
       responses:

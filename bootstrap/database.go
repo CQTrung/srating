@@ -37,7 +37,7 @@ func NewPostgresDatabase(env *Env) *gorm.DB {
 		dbresolver.Register(dbresolver.Config{}).
 			SetConnMaxIdleTime(time.Hour).
 			SetConnMaxLifetime(2 * time.Minute).
-			SetMaxIdleConns(4).
+			SetMaxIdleConns(40).
 			SetMaxOpenConns(90),
 	)
 	if err != nil {
