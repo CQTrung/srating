@@ -32,7 +32,7 @@ func (s Status) IsValid() bool {
 
 type User struct {
 	HardModel
-	Username     string      `json:"username" gorm:"column:username;unique" validate:"required"`
+	Username     string      `json:"username" gorm:"column:username" validate:"required"`
 	Password     string      `json:"password" gorm:"column:password" validate:"required"`
 	Phone        string      `json:"phone" gorm:"column:phone" validate:"required"`
 	Email        string      `json:"email" gorm:"column:email" validate:"required"`
@@ -41,6 +41,7 @@ type User struct {
 	Field        string      `json:"field" gorm:"column:field" validate:"required"`
 	Avatar       *Media      `json:"media" gorm:"many2many:user_media;"`
 	DepartmentID uint        `json:"department_id" gorm:"department_id" validate:"required"`
+	Department   *Department `json:"department" gorm:"foreignKey:DepartmentID"`
 	Feedbacks    []*Feedback `json:"feedbacks" gorm:"foreignKey:UserID"`
 	Role         Role        `json:"role" gorm:"column:role"`
 	Status       Status      `json:"status" gorm:"column:status"`
@@ -52,6 +53,9 @@ type UserService interface {
 	GetAllEmployee(c context.Context) ([]*User, error)
 	CountUserByRole(c context.Context) (map[string]int64, error)
 	CountTotalField(c context.Context) (int64, error)
+	UpdateEmployee(c context.Context, input *UpdateUserRequest) error
+	DeleteEmployee(c context.Context, id uint) error
+	CreateUser(c context.Context, user *User) error
 }
 type UserRepository interface {
 	UpdateUser(c context.Context, user *User) error
@@ -61,24 +65,49 @@ type UserRepository interface {
 	GetAllEmployee(c context.Context) ([]*User, error)
 	CountUserByRole(c context.Context) ([]*GetUserByRoleResponse, error)
 	CountTotalField(c context.Context) (int64, error)
+	UpdateEmployee(c context.Context, user *User) error
+	DeleteEmployee(c context.Context, id uint) error
+	CreateUser(c context.Context, user *User) error
 }
 type GetUserByIDResponse struct {
-	ID           uint   `json:"id"`
+	ID           uint        `json:"id"`
+	Username     string      `json:"username"`
+	Phone        string      `json:"phone"`
+	Email        string      `json:"email"`
+	ShortName    string      `json:"short_name"`
+	FullName     string      `json:"full_name"`
+	Field        string      `json:"field"`
+	Avatar       *Media      `json:"media"`
+	DepartmentID uint        `json:"department_id"`
+	Department   *Department `json:"department"`
+	Role         Role        `json:"role"`
+	Status       Status      `json:"status"`
+}
+
+type GetUserByRoleResponse struct {
+	Role  string `json:"role"`
+	Count int    `json:"count"`
+}
+type CreateUserRequest struct {
 	Username     string `json:"username"`
+	Password     string `json:"password"`
 	Phone        string `json:"phone"`
 	Email        string `json:"email"`
 	ShortName    string `json:"short_name"`
 	FullName     string `json:"full_name"`
 	Field        string `json:"field"`
-	Avatar       *Media `json:"media"`
 	DepartmentID uint   `json:"department_id"`
 	Role         Role   `json:"role"`
 	Status       Status `json:"status"`
 }
-type ChangeStatusRequest struct {
-	Status Status `json:"status"`
-}
-type GetUserByRoleResponse struct {
-	Role  string `json:"role"`
-	Count int    `json:"count"`
+type UpdateUserRequest struct {
+	ID           uint   `json:"id"`
+	Phone        string `json:"phone"`
+	Email        string `json:"email"`
+	ShortName    string `json:"short_name"`
+	FullName     string `json:"full_name"`
+	Field        string `json:"field"`
+	DepartmentID uint   `json:"department_id"`
+	Role         Role   `json:"role"`
+	Status       Status `json:"status"`
 }

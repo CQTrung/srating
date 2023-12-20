@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"srating/domain"
@@ -36,6 +37,7 @@ func (uu *userService) GetUserByID(c context.Context, id uint) (*domain.User, er
 func (uu *userService) ChangeStatus(c context.Context, id uint, status domain.Status) error {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
+
 	if err := uu.userRepository.ChangeStatus(ctx, id, status); err != nil {
 		utils.LogError(err, "Failed to change status")
 		return err
@@ -86,4 +88,69 @@ func (uu *userService) CountTotalField(c context.Context) (int64, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func (uu *userService) UpdateEmployee(c context.Context, input *domain.UpdateUserRequest) error {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+	if err := utils.Validate(input); err != nil {
+		utils.LogError(err, "Failed to validate input")
+		return err
+	}
+	if input.Role != domain.EmployeeRole {
+		err := errors.New("failed to update employee")
+		utils.LogError(err, "Failed to update employee")
+		return err
+	}
+	input.Role = domain.EmployeeRole
+	user := &domain.User{
+		HardModel: domain.HardModel{
+			ID: input.ID,
+		},
+		Email:        input.Email,
+		ShortName:    input.ShortName,
+		FullName:     input.FullName,
+		Field:        input.Field,
+		DepartmentID: input.DepartmentID,
+		Phone:        input.Phone,
+		Role:         input.Role,
+		Status:       input.Status,
+	}
+
+	if err := uu.userRepository.UpdateUser(ctx, user); err != nil {
+		utils.LogError(err, "Failed to update employee")
+		return err
+	}
+	return nil
+}
+
+func (uu *userService) DeleteEmployee(c context.Context, id uint) error {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+	if err := uu.userRepository.DeleteEmployee(ctx, id); err != nil {
+		utils.LogError(err, "Failed to delete employee")
+		return err
+	}
+	return nil
+}
+
+func (uu *userService) CreateUser(c context.Context, user *domain.User) error {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+	if err := utils.Validate(user); err != nil {
+		utils.LogError(err, "Failed to validate input")
+		return err
+	}
+	if user.Role != domain.EmployeeRole {
+		err := errors.New("failed to create employee")
+		utils.LogError(err, "Failed to create employee")
+		return err
+	}
+	user.Role = domain.EmployeeRole
+	err := uu.userRepository.CreateUser(ctx, user)
+	if err != nil {
+		utils.LogError(err, "Failed to create employee")
+		return err
+	}
+	return nil
 }

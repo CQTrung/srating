@@ -18,7 +18,6 @@ func AddHeader() gin.HandlerFunc {
 			c.Writer.WriteHeader(200)
 			return
 		}
-
 		c.Next()
 	}
 }

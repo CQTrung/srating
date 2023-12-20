@@ -55,15 +55,14 @@ func initServer(app *bootstrap.Application) {
 
 	// Configure Logger (zerolog)
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix // Set the time field format to Unix time.
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)        // Set the global log level to Info.
 
 	// Configure Swagger Documentation (docs)
-	docs.SwaggerInfo.Title = "Tourist API"                                   // Set the title of the Swagger API documentation.
-	docs.SwaggerInfo.Description = "This is a sample server Tourist server." // Set the API description.
-	docs.SwaggerInfo.Version = "1.0"                                         // Set the API version.
-	docs.SwaggerInfo.Host = env.BaseURL                                      // Set the API's base URL.
-	docs.SwaggerInfo.BasePath = "/api/v1"                                    // Set the base path of API endpoints.
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}                     // Define supported schemes.
+	docs.SwaggerInfo.Title = "S-Rating API"                                   // Set the title of the Swagger API documentation.
+	docs.SwaggerInfo.Description = "This is a sample server S-Rating server." // Set the API description.
+	docs.SwaggerInfo.Version = "1.0"                                          // Set the API version.
+	docs.SwaggerInfo.Host = env.BaseURL                                       // Set the API's base URL.
+	docs.SwaggerInfo.BasePath = "/api/v1"                                     // Set the base path of API endpoints.
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}                      // Define supported schemes.
 	// Initialize Router and Routes
 	router := NewRouter(env)                         // Initialize the HTTP router.
 	routes.Setup(env, timeout, router, db, rd, asyn) // Setup routes, middleware, and dependencies.

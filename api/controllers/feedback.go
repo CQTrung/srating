@@ -26,7 +26,7 @@ type FeedbackController struct {
 // @Success 200 {object} string
 func (t *FeedbackController) CreateFeedback(c *gin.Context) {
 	input := &domain.Feedback{}
-	rest.AssertNil(c.ShouldBindJSON(input))
+	rest.AssertNil(c.ShouldBindJSON(&input))
 	err := t.FeedbackService.CreateFeedback(c, input)
 	rest.AssertNil(err)
 	t.Success(c)
@@ -36,12 +36,42 @@ func (t *FeedbackController) CreateFeedback(c *gin.Context) {
 // @Router /feedbacks [get]
 // @Tags feedback
 // @Summary Get all feedback
+// @Param limit query int false "limit"
+// @Param page query int false "page"
+// @Param user_id query int false "user_id"
+// @Param level query int false "level"
+// @Param start_date query int false "start_date"
+// @Param end_date query int false "end_date"
 // @Security ApiKeyAuth
 // @Success 200 {object} string
 func (t *FeedbackController) GetAllFeedback(c *gin.Context) {
-	result, err := t.FeedbackService.GetAllFeedback(c)
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
+	userID, _ := strconv.Atoi(c.Query("user_id"))
+	level, _ := strconv.Atoi(c.Query("level"))
+	startDate, _ := strconv.Atoi(c.Query("start_date"))
+	endDate, _ := strconv.Atoi(c.Query("end_date"))
+	input := domain.GetAllFeedbackRequest{
+		UserID:    uint(userID),
+		Level:     domain.Level(level),
+		StartDate: int64(startDate),
+		EndDate:   int64(endDate),
+		PaginationRequest: domain.PaginationRequest{
+			Limit: limit,
+			Page:  page,
+		},
+	}
+	total, totalCount, result, err := t.FeedbackService.GetAllFeedback(c, input)
 	rest.AssertNil(err)
-	t.SendData(c, result)
+	t.SendCustomData(c, map[string]interface{}{
+		"status":     "success",
+		"data":       result,
+		"total":      total,
+		"page":       page,
+		"limit":      limit,
+		"totalCount": totalCount,
+	},
+	)
 }
 
 // GetFeedbackDetail
@@ -58,31 +88,22 @@ func (t *FeedbackController) GetFeedbackDetail(c *gin.Context) {
 	t.SendData(c, result)
 }
 
-// UpdateFeedback
-// @Router /feedbacks [put]
+// SearchFeedback
+// @Router /feedbacks/search [post]
 // @Tags feedback
-// @Param payload body domain.Feedback true "payload"
-// @Summary Update feedback
+// @Summary Search feedback
 // @Security ApiKeyAuth
 // @Success 200 {object} string
-func (t *FeedbackController) UpdateFeedback(c *gin.Context) {
-	input := &domain.Feedback{}
-	rest.AssertNil(c.ShouldBindJSON(input))
-	err := t.FeedbackService.UpdateFeedback(c, input)
+func (t *FeedbackController) SearchFeedback(c *gin.Context) {
+	input := domain.SearchFeedbackRequest{}
+	rest.AssertNil(c.ShouldBindJSON(&input))
+	total, totalCount, result, err := t.FeedbackService.SearchFeedback(c, input)
 	rest.AssertNil(err)
-	t.Success(c)
+	t.SendCustomData(c, map[string]interface{}{
+		"status":     "success",
+		"data":       result,
+		"total":      total,
+		"totalCount": totalCount,
+	},
+	)
 }
-
-// // DeleteFeedback
-// // @Router /feedbacks/:id [delete]
-// // @Tags feedback
-// // @Summary Delete feedback
-// // @Security ApiKeyAuth
-// // @Success 200 {object} string
-// func (t *FeedbackController) DeleteFeedback(c *gin.Context) {
-// 	id, err := strconv.Atoi(c.Param("id"))
-// 	rest.AssertNil(err)
-// 	err = t.FeedbackService.DeleteFeedback(c, uint(id))
-// 	rest.AssertNil(err)
-// 	t.Success(c)
-// }

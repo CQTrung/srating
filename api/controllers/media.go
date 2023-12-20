@@ -17,7 +17,7 @@ type MediaController struct {
 }
 
 // Upload
-// @Router /admin/media [post]
+// @Router /media [post]
 // @Tags media
 // @Summary Upload media
 // @Security ApiKeyAuth
@@ -40,7 +40,7 @@ func (t *MediaController) Upload(c *gin.Context) {
 }
 
 // GetAll
-// @Router /admin/media [get]
+// @Router /media [get]
 // @Tags media
 // @Summary Get all media
 // @Security ApiKeyAuth

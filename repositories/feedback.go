@@ -25,13 +25,38 @@ func (r *feedbackRepository) CreateFeedback(c context.Context, feedback *domain.
 	return db.Save(feedback).Error
 }
 
-func (r *feedbackRepository) GetAllFeedback(c context.Context) ([]*domain.Feedback, error) {
-	var feedbacks []*domain.Feedback
-	query := r.GetDB(c)
-	if err := query.Order("updated_at desc").Find(&feedbacks).Error; err != nil {
-		return nil, err
+func (r *feedbackRepository) GetAllFeedback(c context.Context, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
+	feedbacks := []*domain.Feedback{}
+	total := int64(0)
+	query := r.GetDB(c).Model(&domain.Feedback{})
+	if input.UserID != 0 {
+		query = query.Where("user_id = ?", input.UserID)
 	}
-	return feedbacks, nil
+	if input.Level != 0 {
+		query = query.Where("level = ?", input.Level)
+	}
+	if input.StartDate != 0 {
+		query = query.Where("created_at >= ?", input.StartDate)
+	}
+	if input.EndDate != 0 {
+		query = query.Where("created_at <= ?", input.EndDate)
+	}
+	if err := query.Count(&total).Error; err != nil {
+		return 0, 0, nil, err
+	}
+	if err := query.Count(&total).Error; err != nil {
+		return 0, 0, nil, err
+	}
+	query = query.Scopes(r.Paginate(input.Page, input.Limit))
+	if err := query.Order("updated_at desc").Find(&feedbacks).Error; err != nil {
+		return 0, 0, nil, err
+	}
+	totalCount := int64(0)
+	if err := query.Count(&totalCount).Error; err != nil {
+		return 0, 0, nil, err
+	}
+
+	return total, totalCount, feedbacks, nil
 }
 
 func (r *feedbackRepository) GetFeedbackDetail(c context.Context, id uint) (*domain.Feedback, error) {
@@ -69,4 +94,35 @@ func (r *feedbackRepository) GetTotalFeedBack(c context.Context) (int64, error) 
 		return 0, err
 	}
 	return total, nil
+}
+
+func (f *feedbackRepository) SearchFeedback(c context.Context, input domain.SearchFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
+	feedbacks := []*domain.Feedback{}
+	total := int64(0)
+	query := f.GetDB(c).Model(&domain.Feedback{})
+	if input.UserID != 0 {
+		query = query.Where("user_id = ?", input.UserID)
+	}
+	if input.Level != 0 {
+		query = query.Where("level = ?", input.Level)
+	}
+	if input.StartDate != 0 {
+		query = query.Where("created_at >= ?", input.StartDate)
+	}
+	if input.EndDate != 0 {
+		query = query.Where("created_at <= ?", input.EndDate)
+	}
+	if err := query.Count(&total).Error; err != nil {
+		return 0, 0, nil, err
+	}
+	query = query.Scopes(f.Paginate(input.Page, input.Limit))
+	if err := query.Order("updated_at desc").Find(&feedbacks).Error; err != nil {
+		return 0, 0, nil, err
+	}
+	totalCount := int64(0)
+	if err := query.Count(&totalCount).Error; err != nil {
+		return 0, 0, nil, err
+	}
+
+	return total, totalCount, feedbacks, nil
 }

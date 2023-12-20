@@ -21,7 +21,7 @@ type AuthController struct {
 // @Param request body domain.User true "request"
 // @Success 200 {object} string
 func (uc *AuthController) Register(c *gin.Context) {
-	var body *domain.User
+	body := &domain.User{}
 	err := c.ShouldBindJSON(&body)
 	rest.AssertNil(err)
 	err = uc.AuthService.Register(c, body)
@@ -58,11 +58,16 @@ func (uc *AuthController) Login(c *gin.Context) {
 	rest.AssertNil(err)
 	data := &domain.LoginResponse{
 		ID:           user.ID,
+		Username:     user.Username,
 		Phone:        user.Phone,
 		Email:        user.Email,
 		ShortName:    user.ShortName,
-		Username:     user.Username,
+		FullName:     user.FullName,
+		Field:        user.Field,
+		Avatar:       user.Avatar,
+		Department:   user.Department,
 		Role:         user.Role,
+		Status:       domain.Status(user.Status),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
