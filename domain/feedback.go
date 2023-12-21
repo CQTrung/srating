@@ -28,6 +28,7 @@ type FeedbackService interface {
 	DeleteFeedback(c context.Context, id uint) error
 	CountFeedbackByType(c context.Context) (map[int]int64, error)
 	GetTotalFeedBack(c context.Context) (int64, error)
+	GetFeedbackByLevel(c context.Context, level int, userID uint) ([]*Feedback, error)
 }
 type FeedbackRepository interface {
 	CreateFeedback(c context.Context, department *Feedback) error
@@ -37,6 +38,7 @@ type FeedbackRepository interface {
 	DeleteFeedback(c context.Context, id uint) error
 	CountFeedbackByType(c context.Context) ([]*GetFeedbackByTypeResponse, error)
 	GetTotalFeedBack(c context.Context) (int64, error)
+	GetFeedbackByLevel(c context.Context, level int, userID uint) ([]*Feedback, error)
 }
 type GetFeedbackByTypeResponse struct {
 	Level int `json:"level"`

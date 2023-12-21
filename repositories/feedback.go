@@ -70,3 +70,13 @@ func (r *feedbackRepository) GetTotalFeedBack(c context.Context) (int64, error) 
 	}
 	return total, nil
 }
+
+func (r *feedbackRepository) GetFeedbackByLevel(c context.Context, level int, userID uint) ([]*domain.Feedback, error) {
+	feedbackList := []*domain.Feedback{}
+    query := r.GetDB(c)
+    if err := query.Model(&domain.Feedback{}).Where("level = ? AND user_id = ?", level,userID).Find(&feedbackList).Error; err != nil {
+        return nil, err
+    }
+    
+    return feedbackList, nil
+}

@@ -110,3 +110,14 @@ func (u *feedbackService) GetTotalFeedBack(c context.Context) (int64, error) {
 	}
 	return total, nil
 }
+
+func (u *feedbackService) GetFeedbackByLevel(c context.Context, level int, userID uint) ([]*domain.Feedback, error) {
+	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
+	defer cancel()
+	feedbacks, err := u.feedbackRepository.GetFeedbackByLevel(ctx, level, userID)
+	if err != nil {
+		utils.LogError(err, "Failed to get feedback by level")
+		return nil, err
+	}
+	return feedbacks, nil
+}

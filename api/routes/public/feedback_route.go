@@ -25,4 +25,5 @@ func NewFeedbackRouter(env *bootstrap.Env, timeout time.Duration, group *gin.Rou
 		Env:             env,
 	}
 	group.POST("/feedbacks", fc.CreateFeedback)
+	group.POST("/feedbacks/level",fc.GetFeedbackByLevel)
 }

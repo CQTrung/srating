@@ -5,6 +5,7 @@ import (
 
 	"srating/bootstrap"
 	"srating/domain"
+	"srating/utils"
 	"srating/x/rest"
 
 	"github.com/gin-gonic/gin"
@@ -86,3 +87,19 @@ func (t *FeedbackController) UpdateFeedback(c *gin.Context) {
 // 	rest.AssertNil(err)
 // 	t.Success(c)
 // }
+
+// GetFeedbackByLevel
+// @Router /feedbacks/level
+// @Tags feedback
+// @Summary Get feedback by level
+// @Security ApiKeyAuth
+// @Success 200 {object} string
+func (t *FeedbackController) GetFeedbackByLevel(c *gin.Context) {
+	level, err := strconv.Atoi(c.Query("level"))
+	rest.AssertNil(err)
+	userID ,err := utils.GetUserIDFromContext(c)
+	rest.AssertNil(err)
+	result, err := t.FeedbackService.GetFeedbackByLevel(c,level,userID)
+	rest.AssertNil(err)
+	t.SendData(c, result)
+}
