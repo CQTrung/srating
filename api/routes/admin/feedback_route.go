@@ -27,4 +27,5 @@ func NewFeedbackRouter(env *bootstrap.Env, timeout time.Duration, group *gin.Rou
 	// group.POST("/feedbacks", fc.CreateFeedback)
 	group.GET("/feedbacks", fc.GetAllFeedback)
 	group.GET("/feedbacks/:id", fc.GetFeedbackDetail)
+	group.POST("/feedbacks/search", fc.SearchFeedback)
 }

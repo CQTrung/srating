@@ -6,14 +6,19 @@ type LoginRequest struct {
 	IsRememberMe bool   `json:"is_remember_me"`
 }
 type LoginResponse struct {
-	ID           uint   `json:"id"`
-	Phone        string `json:"phone"`
-	Email        string `json:"email"`
-	ShortName    string `json:"name"`
-	Username     string `json:"username"`
-	Role         Role   `json:"role"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	ID           uint        `json:"id"`
+	Username     string      `json:"username"`
+	Phone        string      `json:"phone"`
+	Email        string      `json:"email"`
+	ShortName    string      `json:"short_name"`
+	FullName     string      `json:"full_name"`
+	Field        string      `json:"field"`
+	Avatar       *Media      `json:"media"`
+	Department   *Department `json:"department"`
+	Role         Role        `json:"role"`
+	Status       Status      `json:"status"`
+	AccessToken  string      `json:"access_token"`
+	RefreshToken string      `json:"refresh_token"`
 }
 
 type LoginService interface {

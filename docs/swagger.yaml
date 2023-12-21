@@ -1,4 +1,42 @@
 definitions:
+  domain.CreateUserRequest:
+    properties:
+      department_id:
+        type: integer
+      email:
+        type: string
+      field:
+        type: string
+      full_name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      role:
+        $ref: '#/definitions/domain.Role'
+      short_name:
+        type: string
+      status:
+        $ref: '#/definitions/domain.Status'
+      username:
+        type: string
+    type: object
+  domain.Department:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/domain.User'
+        type: array
+    type: object
   domain.Feedback:
     properties:
       created_at:
@@ -45,18 +83,28 @@ definitions:
     properties:
       access_token:
         type: string
+      department:
+        $ref: '#/definitions/domain.Department'
       email:
+        type: string
+      field:
+        type: string
+      full_name:
         type: string
       id:
         type: integer
-      name:
-        type: string
+      media:
+        $ref: '#/definitions/domain.Media'
       phone:
         type: string
       refresh_token:
         type: string
       role:
         $ref: '#/definitions/domain.Role'
+      short_name:
+        type: string
+      status:
+        $ref: '#/definitions/domain.Status'
       username:
         type: string
     type: object
@@ -102,10 +150,37 @@ definitions:
     x-enum-varnames:
     - ActiveStatus
     - InActiveStatus
+  domain.UpdateUserRequest:
+    properties:
+      department_id:
+        type: integer
+      email:
+        type: string
+      field:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      phone:
+        type: string
+      role:
+        $ref: '#/definitions/domain.Role'
+      short_name:
+        type: string
+      status:
+        $ref: '#/definitions/domain.Status'
+      username:
+        type: string
+    type: object
   domain.User:
     properties:
       created_at:
         type: string
+      department:
+        $ref: '#/definitions/domain.Department'
       department_id:
         type: integer
       email:
@@ -152,29 +227,6 @@ externalDocs:
 info:
   contact: {}
 paths:
-  /admin/media:
-    get:
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Get all media
-      tags:
-      - media
-    post:
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Upload media
-      tags:
-      - media
   /auth/login:
     post:
       parameters:
@@ -239,6 +291,31 @@ paths:
       - dashboard
   /feedbacks:
     get:
+      parameters:
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: user_id
+        in: query
+        name: user_id
+        type: integer
+      - description: level
+        in: query
+        name: level
+        type: integer
+      - description: start_date
+        in: query
+        name: start_date
+        type: integer
+      - description: end_date
+        in: query
+        name: end_date
+        type: integer
       responses:
         "200":
           description: OK
@@ -267,24 +344,6 @@ paths:
       summary: Create feedback
       tags:
       - feedback
-    put:
-      parameters:
-      - description: payload
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/domain.Feedback'
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Update feedback
-      tags:
-      - feedback
   /feedbacks/:id:
     get:
       responses:
@@ -297,6 +356,41 @@ paths:
       summary: Get feedback by detail
       tags:
       - feedback
+  /feedbacks/search:
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Search feedback
+      tags:
+      - feedback
+  /media:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Get all media
+      tags:
+      - media
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Upload media
+      tags:
+      - media
   /users:
     get:
       responses:
@@ -309,6 +403,24 @@ paths:
       summary: Get user detail
       tags:
       - user
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateUserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Create user by admin
+      tags:
+      - user
   /users/employees:
     get:
       responses:
@@ -319,6 +431,48 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get all employee
+      tags:
+      - user
+    put:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateUserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Update employee
+      tags:
+      - user
+  /users/employees/:id:
+    delete:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete employee
+      tags:
+      - user
+  /users/status:
+    put:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Change status
       tags:
       - user
 securityDefinitions:

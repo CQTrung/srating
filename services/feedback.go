@@ -34,15 +34,21 @@ func (u *feedbackService) CreateFeedback(c context.Context, input *domain.Feedba
 	return nil
 }
 
-func (u *feedbackService) GetAllFeedback(c context.Context) ([]*domain.Feedback, error) {
+func (u *feedbackService) GetAllFeedback(c context.Context, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
-	feedbacks, err := u.feedbackRepository.GetAllFeedback(ctx)
+	if input.Limit < 0 {
+		input.Limit = 10
+	}
+	if input.Page < 0 {
+		input.Page = 1
+	}
+	total, totalCount, feedbacks, err := u.feedbackRepository.GetAllFeedback(ctx, input)
 	if err != nil {
 		utils.LogError(err, "Failed to get all feedback")
-		return nil, err
+		return 0, 0, nil, err
 	}
-	return feedbacks, nil
+	return total, totalCount, feedbacks, nil
 }
 
 func (u *feedbackService) GetFeedbackDetail(c context.Context, id uint) (*domain.Feedback, error) {
@@ -120,4 +126,21 @@ func (u *feedbackService) GetFeedbackByLevel(c context.Context, level int, userI
 		return nil, err
 	}
 	return feedbacks, nil
+}
+
+func (u *feedbackService) SearchFeedback(c context.Context, input domain.SearchFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
+	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
+	defer cancel()
+	if input.Limit < 0 {
+		input.Limit = 10
+	}
+	if input.Page < 0 {
+		input.Page = 1
+	}
+	total, totalCount, feedbacks, err := u.feedbackRepository.SearchFeedback(ctx, input)
+	if err != nil {
+		utils.LogError(err, "Failed to search feedback")
+		return 0, 0, nil, err
+	}
+	return total, totalCount, feedbacks, nil
 }
