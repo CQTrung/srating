@@ -19,5 +19,15 @@
 
 !Makefile
 
+!build_centos.sh
+
+!gitlab-ci.yml
+
+!Dockerfile
+
+!docker-compose.yml
+
+!golangci.yml
+
 # ...even if they are in subdirectories
 !*/
