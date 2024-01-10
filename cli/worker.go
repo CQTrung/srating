@@ -34,7 +34,7 @@ package cli
 // 	}
 
 // 	// Create an instance of the worker.
-// 	worker := asynq.NewServer(redisOpts, asynq.Config{})
+// 	worker := asynq.NewServer(redisOptsq.Config{})
 
 // 	// Create a multiplexer.
 // 	mux := asynq.NewServeMux()
@@ -44,7 +44,7 @@ package cli
 // 	var (
 // 		mailer = mail.NewGmailSender(env.EmailSenderName, env.EmailSenderAddress, env.EmailSenderPassword)
 // 		ur     = repositories.NewUserRepository(db)
-// 		uu     = services.NewUserService(ur, asyn, timeout)
+// 		uu     = services.NewUserService(ur, timeout)
 // 		btkr   = repositories.NewBookingTrackingRepository(db)
 // 		btku   = services.NewBookingTrackingService(btkr, timeout)
 // 	)

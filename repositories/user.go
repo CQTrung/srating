@@ -23,7 +23,7 @@ func NewUserRepository(db *gorm.DB) domain.UserRepository {
 
 func (r *userRepository) GetUserByID(c context.Context, id uint) (*domain.User, error) {
 	var user *domain.User
-	if err := r.GetDB(c).Preload("Department").First(&user, id).Error; err != nil {
+	if err := r.GetDB(c).Preload("Avatar").Preload("Department").First(&user, id).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
@@ -31,34 +31,40 @@ func (r *userRepository) GetUserByID(c context.Context, id uint) (*domain.User, 
 
 func (r *userRepository) GetUserByUsername(c context.Context, username string) (*domain.User, error) {
 	var user *domain.User
-	if err := r.GetDB(c).Preload("Department").Where("username = ?", username).First(&user).Error; err != nil {
+	if err := r.GetDB(c).Model(&domain.User{}).Preload("Avatar").Preload("Department").Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
 func (r *userRepository) UpdateUser(c context.Context, user *domain.User) error {
-	return r.GetDB(c).Save(user).Error
+	media := &domain.Media{Model: domain.Model{ID: user.MediaID}}
+	if err := r.GetDB(c).Model(&user).Association("Avatar").Replace(media); err != nil {
+		return err
+	}
+	return r.GetDB(c).Model(&domain.User{}).Where("id = ?", user.ID).Updates(user).Error
 }
 
 func (r *userRepository) ChangeStatus(c context.Context, id uint, status domain.Status) error {
-	// Construct the raw SQL update query
-	query := "UPDATE users SET status = ? WHERE id = ?"
-
-	// Execute the raw SQL query with parameters
-	if err := r.GetDB(c).Exec(query, status, id).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return r.GetDB(c).Model(&domain.User{}).Where("id = ?", id).Update("status", status).Error
 }
 
-func (r *userRepository) GetAllEmployee(c context.Context) ([]*domain.User, error) {
-	var users []*domain.User
-	if err := r.GetDB(c).Where("role = ?", domain.EmployeeRole).Find(&users).Error; err != nil {
-		return nil, err
+func (r *userRepository) GetAllEmployee(c context.Context, input domain.GetAllUserRequest) (int64, int64, []*domain.User, error) {
+	query := r.GetDB(c).Model(&domain.User{}).Preload("Avatar").Preload("Department").Where("role = ?", domain.EmployeeRole).Order("updated_at desc")
+	total := int64(0)
+	if err := query.Count(&total).Error; err != nil {
+		return 0, 0, nil, err
 	}
-	return users, nil
+	users := []*domain.User{}
+	query = query.Scopes(r.Paginate(input.Page, input.Limit)).Order("updated_at desc")
+	if err := query.Find(&users).Error; err != nil {
+		return 0, 0, nil, err
+	}
+	totalCount := int64(0)
+	if err := query.Count(&totalCount).Error; err != nil {
+		return 0, 0, nil, err
+	}
+	return total, totalCount, users, nil
 }
 
 func (r *userRepository) CountUserByRole(c context.Context) ([]*domain.GetUserByRoleResponse, error) {
@@ -78,37 +84,36 @@ func (r *userRepository) CountTotalField(c context.Context) (int64, error) {
 	return count, nil
 }
 
-func (r *userRepository) UpdateEmployee(c context.Context, user *domain.User) error {
-	// Assuming your table name is "users"
-	query := `
-        UPDATE users
-        SET username = ?, password = ?, phone = ?, email = ?, short_name = ?, full_name = ?,
-            field = ?, department_id = ?, role = ?, status = ?
-        WHERE id = ?
-    `
-	args := []interface{}{
-		user.Username, user.Password, user.Phone, user.Email, user.ShortName,
-		user.FullName, user.Field, user.DepartmentID, user.Role, user.Status, user.ID,
-	}
-
-	result := r.GetDB(c).Exec(query, args...)
-
-	if result.Error != nil {
-		return result.Error
-	}
-
-	// Check the number of rows affected to ensure that the update was successful
-	if rowsAffected := result.RowsAffected; rowsAffected == 0 {
-		return errors.New("no rows were updated")
-	}
-
-	return nil
-}
-
 func (r *userRepository) DeleteEmployee(c context.Context, id uint) error {
 	return r.GetDB(c).Delete(&domain.User{}, id).Error
 }
 
 func (r *userRepository) CreateUser(c context.Context, user *domain.User) error {
-	return r.GetDB(c).Create(&user).Error
+	return r.GetDB(c).Save(user).Error
+}
+
+func (r *userRepository) ChangePassword(c context.Context, id uint, oldPassword, newPassword string) error {
+	query := "UPDATE users SET password = ? WHERE id = ? AND password = ?"
+	// Execute the raw SQL query with parameters
+	result := r.GetDB(c).Exec(query, newPassword, id, oldPassword)
+	if err := result.Error; err != nil {
+		return err
+	}
+	if rowsAffected := result.RowsAffected; rowsAffected == 0 {
+		return errors.New("no rows were updated")
+	}
+	return nil
+}
+
+func (r *userRepository) ResetPassword(c context.Context, id uint, newPassword string) error {
+	query := "UPDATE users SET password = ? WHERE id = ?"
+	// Execute the raw SQL query with parameters
+	result := r.GetDB(c).Exec(query, newPassword, id)
+	if err := result.Error; err != nil {
+		return err
+	}
+	if rowsAffected := result.RowsAffected; rowsAffected == 0 {
+		return errors.New("no rows were updated")
+	}
+	return nil
 }

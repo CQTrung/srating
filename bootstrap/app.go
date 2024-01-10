@@ -18,13 +18,13 @@ func NewApplication() *Application {
 	app.Env = NewEnv()
 	app.DB = NewPostgresDatabase(app.Env)
 	// app.DB = NewMongoDatabase(app.Env)
-	app.Redis = NewRedisClient(app.Env)
-	app.AsynqClient = NewAsynqClient(app.Env)
+	// app.Redis = NewRedisClient(app.Env)
+	// app.AsynqClient = NewAsynqClient(app.Env)
 	return app
 }
 
 func (a *Application) CloseConnection() {
 	ClosePostgreConnection(a.DB)
-	CloseRedisConnection(a.Redis)
-	CloseAsynqConnection(a.AsynqClient)
+	// CloseRedisConnection(a.Redis)
+	// CloseAsynqConnection(a.AsynqClient)
 }

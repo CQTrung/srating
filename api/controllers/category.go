@@ -5,38 +5,37 @@ import (
 
 	"srating/bootstrap"
 	"srating/domain"
-	"srating/utils"
 	"srating/x/rest"
 
 	"github.com/gin-gonic/gin"
 )
 
-type FeedbackController struct {
-	FeedbackService domain.FeedbackService
+type CategoryController struct {
+	CategoryService domain.CategoryService
 	Env             *bootstrap.Env
 	*rest.JSONRender
 }
 
-// CreateFeedback
-// @Router /feedbacks [post]
-// @Tags feedback
-// @Query body domain.Feedback
-// @Param payload body domain.Feedback true "payload"
-// @Summary Create feedback
+// CreateCategory
+// @Router /categories [post]
+// @Tags category
+// @Query body domain.Category
+// @Param payload body domain.Category true "payload"
+// @Summary Create category
 // @Security ApiKeyAuth
 // @Success 200 {object} string
-func (t *FeedbackController) CreateFeedback(c *gin.Context) {
-	input := &domain.Feedback{}
+func (t *CategoryController) CreateCategory(c *gin.Context) {
+	input := &domain.Category{}
 	rest.AssertNil(c.ShouldBindJSON(&input))
-	err := t.FeedbackService.CreateFeedback(c, input)
+	err := t.CategoryService.CreateCategory(c, input)
 	rest.AssertNil(err)
 	t.Success(c)
 }
 
-// GetAllFeedback
-// @Router /feedbacks [get]
-// @Tags feedback
-// @Summary Get all feedback
+// GetAllCategory
+// @Router /categories [get]
+// @Tags category
+// @Summary Get all category
 // @Param limit query int false "limit"
 // @Param page query int false "page"
 // @Param user_id query int false "user_id"
@@ -45,14 +44,14 @@ func (t *FeedbackController) CreateFeedback(c *gin.Context) {
 // @Param end_date query int false "end_date"
 // @Security ApiKeyAuth
 // @Success 200 {object} string
-func (t *FeedbackController) GetAllFeedback(c *gin.Context) {
+func (t *CategoryController) GetAllCategory(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	userID, _ := strconv.Atoi(c.Query("user_id"))
 	level, _ := strconv.Atoi(c.Query("level"))
 	startDate, _ := strconv.Atoi(c.Query("start_date"))
 	endDate, _ := strconv.Atoi(c.Query("end_date"))
-	input := domain.GetAllFeedbackRequest{
+	input := domain.GetAllCategoryRequest{
 		UserID:    uint(userID),
 		Level:     domain.Level(level),
 		StartDate: int64(startDate),
@@ -62,7 +61,7 @@ func (t *FeedbackController) GetAllFeedback(c *gin.Context) {
 			Page:  page,
 		},
 	}
-	total, totalCount, result, err := t.FeedbackService.GetAllFeedback(c, input)
+	total, totalCount, result, err := t.CategoryService.GetAllCategory(c, input)
 	rest.AssertNil(err)
 	t.SendCustomData(c, map[string]interface{}{
 		"status":     "success",
@@ -75,47 +74,44 @@ func (t *FeedbackController) GetAllFeedback(c *gin.Context) {
 	)
 }
 
-// GetFeedbackDetail
-// @Router /feedbacks/:id [get]
-// @Tags feedback
-// @Summary Get feedback by detail
+// GetCategoryDetail
+// @Router /categories/:id [get]
+// @Tags category
+// @Summary Get category by detail
 // @Security ApiKeyAuth
 // @Success 200 {object} string
-func (t *FeedbackController) GetFeedbackDetail(c *gin.Context) {
+func (t *CategoryController) GetCategoryDetail(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	rest.AssertNil(err)
-	result, err := t.FeedbackService.GetFeedbackDetail(c, uint(id))
+	result, err := t.CategoryService.GetCategoryDetail(c, uint(id))
 	rest.AssertNil(err)
 	t.SendData(c, result)
 }
 
-// GetFeedbackByLevel
-// @Router /feedbacks/level [get]
-// @Tags feedback
-// @Summary Get feedback by level
+// UpdateCategory
+// @Router /categories [put]
+// @Tags category
+// @Summary Update category
 // @Security ApiKeyAuth
 // @Success 200 {object} string
-func (t *FeedbackController) GetFeedbackByLevel(c *gin.Context) {
-	level, err := strconv.Atoi(c.Query("level"))
+func (t *CategoryController) UpdateCategory(c *gin.Context) {
+	input := &domain.Category{}
+	rest.AssertNil(c.ShouldBindJSON(&input))
+	err := t.CategoryService.UpdateCategory(c, input)
 	rest.AssertNil(err)
-	userID, err := utils.GetUserIDFromContext(c)
-	rest.AssertNil(err)
-	result, err := t.FeedbackService.GetFeedbackByLevel(c, level, userID)
-	rest.AssertNil(err)
-	t.SendData(c, result)
+	t.Success(c)
 }
 
-// GetFeedbackLevelByUserID
-// @Router /feedbacks/:id/level [get]
-// @Tags feedback
-// @Param id path int true "id"
-// @Summary Get feedback by level
+// DeleteCategory
+// @Router /categories/:id [delete]
+// @Tags category
+// @Summary Delete category
 // @Security ApiKeyAuth
 // @Success 200 {object} string
-func (t *FeedbackController) GetFeedbackLevelByUserID(c *gin.Context) {
+func (t *CategoryController) DeleteCategory(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	rest.AssertNil(err)
-	result, err := t.FeedbackService.GetFeedbackLevelByUserID(c, uint(id))
+	err = t.CategoryService.DeleteCategory(c, uint(id))
 	rest.AssertNil(err)
-	t.SendData(c, result)
+	t.Success(c)
 }

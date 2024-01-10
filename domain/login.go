@@ -13,6 +13,7 @@ type LoginResponse struct {
 	ShortName    string      `json:"short_name"`
 	FullName     string      `json:"full_name"`
 	Field        string      `json:"field"`
+	Counter      string      `json:"counter"`
 	Avatar       *Media      `json:"media"`
 	Department   *Department `json:"department"`
 	Role         Role        `json:"role"`

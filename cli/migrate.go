@@ -22,6 +22,8 @@ func migrateDatabase(db *gorm.DB) error {
 		&domain.Department{},
 		&domain.User{},
 		&domain.Feedback{},
+		&domain.Category{},
+		&domain.FeedbackCategory{},
 	}
 	return db.AutoMigrate(models...)
 }

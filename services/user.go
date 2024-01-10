@@ -2,13 +2,11 @@ package services
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"srating/domain"
 	"srating/utils"
-
-	"github.com/hibiken/asynq"
+	"srating/x/rest"
 )
 
 type userService struct {
@@ -16,7 +14,7 @@ type userService struct {
 	contextTimeout time.Duration
 }
 
-func NewUserService(userRepository domain.UserRepository, asynqClient *asynq.Client, timeout time.Duration) domain.UserService {
+func NewUserService(userRepository domain.UserRepository, timeout time.Duration) domain.UserService {
 	return &userService{
 		userRepository: userRepository,
 		contextTimeout: timeout,
@@ -45,15 +43,15 @@ func (uu *userService) ChangeStatus(c context.Context, id uint, status domain.St
 	return nil
 }
 
-func (uu *userService) GetAllEmployee(c context.Context) ([]*domain.User, error) {
+func (uu *userService) GetAllEmployee(c context.Context, input domain.GetAllUserRequest) (int64, int64, []*domain.User, error) {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	users, err := uu.userRepository.GetAllEmployee(ctx)
+	total, totalCount, users, err := uu.userRepository.GetAllEmployee(ctx, input)
 	if err != nil {
 		utils.LogError(err, "Failed to get all employee")
-		return nil, err
+		return 0, 0, nil, err
 	}
-	return users, nil
+	return total, totalCount, users, nil
 }
 
 func (uu *userService) CountUserByRole(c context.Context) (map[string]int64, error) {
@@ -90,33 +88,10 @@ func (uu *userService) CountTotalField(c context.Context) (int64, error) {
 	return count, nil
 }
 
-func (uu *userService) UpdateEmployee(c context.Context, input *domain.UpdateUserRequest) error {
+func (uu *userService) UpdateEmployee(c context.Context, user *domain.User) error {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	if err := utils.Validate(input); err != nil {
-		utils.LogError(err, "Failed to validate input")
-		return err
-	}
-	if input.Role != domain.EmployeeRole {
-		err := errors.New("failed to update employee")
-		utils.LogError(err, "Failed to update employee")
-		return err
-	}
-	input.Role = domain.EmployeeRole
-	user := &domain.User{
-		HardModel: domain.HardModel{
-			ID: input.ID,
-		},
-		Email:        input.Email,
-		ShortName:    input.ShortName,
-		FullName:     input.FullName,
-		Field:        input.Field,
-		DepartmentID: input.DepartmentID,
-		Phone:        input.Phone,
-		Role:         input.Role,
-		Status:       input.Status,
-	}
-
+	user.Role = domain.EmployeeRole
 	if err := uu.userRepository.UpdateUser(ctx, user); err != nil {
 		utils.LogError(err, "Failed to update employee")
 		return err
@@ -141,15 +116,62 @@ func (uu *userService) CreateUser(c context.Context, user *domain.User) error {
 		utils.LogError(err, "Failed to validate input")
 		return err
 	}
-	if user.Role != domain.EmployeeRole {
-		err := errors.New("failed to create employee")
+	phone, ok := utils.ValidatePhone(user.Phone)
+	if !ok {
+		return rest.ErrValidation
+	}
+	user.Phone = phone
+	user.Role = domain.EmployeeRole
+	password := "123456"
+	password, err := utils.GenerateHashPassword(password)
+	user.Password = password
+	if err != nil {
+		utils.LogError(err, "Invalid password")
+		return err
+	}
+	if err := uu.userRepository.CreateUser(ctx, user); err != nil {
 		utils.LogError(err, "Failed to create employee")
 		return err
 	}
-	user.Role = domain.EmployeeRole
-	err := uu.userRepository.CreateUser(ctx, user)
+	return nil
+}
+
+func (uu *userService) ChangePassword(c context.Context, id uint, oldPassword, newPassword string) error {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+	user, err := uu.userRepository.GetUserByID(ctx, id)
 	if err != nil {
-		utils.LogError(err, "Failed to create employee")
+		utils.LogError(err, "Failed to retrieve user")
+		return err
+	}
+
+	if utils.CompareHashAndPassword(user.Password, oldPassword) != nil {
+		return rest.ErrInvalidCredentials
+	}
+	oldPassword = user.Password
+	newPassword, err = utils.GenerateHashPassword(newPassword)
+	if err != nil {
+		utils.LogError(err, "Invalid password")
+		return err
+	}
+	if err := uu.userRepository.ChangePassword(ctx, id, oldPassword, newPassword); err != nil {
+		utils.LogError(err, "Failed to change password")
+		return err
+	}
+	return nil
+}
+
+func (uu *userService) ResetPassword(c context.Context, id uint) error {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+	newPassword := "123456"
+	newPassword, err := utils.GenerateHashPassword(newPassword)
+	if err != nil {
+		utils.LogError(err, "Invalid password")
+		return err
+	}
+	if err := uu.userRepository.ResetPassword(ctx, id, newPassword); err != nil {
+		utils.LogError(err, "Failed to change password")
 		return err
 	}
 	return nil

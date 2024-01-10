@@ -8,20 +8,16 @@ import (
 	"srating/domain"
 	"srating/utils"
 	"srating/x/rest"
-
-	"github.com/hibiken/asynq"
 )
 
 type authService struct {
 	userRepository domain.UserRepository
-	asynqClient    *asynq.Client
 	contextTimeout time.Duration
 }
 
-func NewAuthService(userRepository domain.UserRepository, asynqClient *asynq.Client, timeout time.Duration) domain.AuthService {
+func NewAuthService(userRepository domain.UserRepository, timeout time.Duration) domain.AuthService {
 	return &authService{
 		userRepository: userRepository,
-		asynqClient:    asynqClient,
 		contextTimeout: timeout,
 	}
 }
@@ -59,42 +55,10 @@ func (uu *authService) Register(c context.Context, user *domain.User) error {
 	user.Password = hashedPassword
 	user.Role = domain.EmployeeRole
 	user.Status = domain.ActiveStatus
-	if err := uu.userRepository.UpdateUser(ctx, user); err != nil {
+	if err := uu.userRepository.CreateUser(ctx, user); err != nil {
 		utils.LogError(err, "Failed to update user")
 		return err
 	}
-
-	// go func() {
-	// 	code, err := utils.GenerateRandomString(8)
-	// 	if err != nil {
-	// 		utils.LogError(err, "Failed to generate random string")
-	// 		return
-	// 	}
-	// 	if err := retry.Do(func() error {
-	// 		taskSendVerifyEmailPayload := &tasks.TaskSendVerifyEmailPayload{
-	// 			ID:       user.ID,
-	// 			FullName: user.FullName,
-	// 			Email:    user.Email,
-	// 			Code:     code,
-	// 		}
-	// 		task, err := tasks.NewTaskSendVerifyEmail(taskSendVerifyEmailPayload)
-	// 		if err != nil {
-	// 			utils.LogError(err, "Failed to create task")
-	// 			return err
-	// 		}
-	// 		info, err := uu.asynqClient.Enqueue(task)
-	// 		if err != nil {
-	// 			utils.LogError(err, "Failed to enqueue task")
-	// 			return err
-	// 		}
-	// 		utils.LogData(info, "info task")
-	// 		return nil
-	// 	}); err != nil {
-	// 		utils.LogError(err, "Failed to retry task send verify email")
-	// 	}
-	// }()
-
-	// utils.LogInfo("Processed verify email task successfully")
 	return nil
 }
 

@@ -1,6 +1,10 @@
 package utils
 
 import (
+	"fmt"
+	"strings"
+	"unicode"
+
 	"srating/x/rest"
 
 	"github.com/go-playground/validator/v10"
@@ -15,4 +19,27 @@ func Validate(data interface{}) error {
 		return rest.ErrValidation
 	}
 	return nil
+}
+
+func ValidatePhone(phone string) (string, bool) {
+	allowedRunes := func(r rune) rune {
+		if unicode.IsNumber(r) || r == '+' {
+			return r
+		}
+		if r == '.' {
+			return ' '
+		}
+		return -1
+	}
+	sanitize := strings.Map(allowedRunes, phone)
+	sanitize = strings.TrimSpace(sanitize)
+	sanitize = strings.ReplaceAll(sanitize, " ", "")
+	if sanitize[0] != '+' && sanitize[0] != '0' {
+		return "", false
+	}
+	if len(sanitize) != 10 && len(sanitize) != 12 {
+		return "", false
+	}
+	fmt.Println(sanitize)
+	return sanitize, true
 }

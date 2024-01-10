@@ -24,7 +24,7 @@ import (
 func NewRouter(env *bootstrap.Env) *gin.Engine {
 	gin.SetMode(env.GinMode)
 	router := gin.New()
-	router.Static("/statics", "./statics")
+	router.Static("/assets", "./assets")
 	router.Use(gin.Logger(), middlewares.AddHeader(), middlewares.Recovery())
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return router
@@ -42,10 +42,8 @@ func server(app *bootstrap.Application) *cobra.Command {
 func initServer(app *bootstrap.Application) {
 	env := app.Env
 	db := app.DB
-	asyn := app.AsynqClient
-	// init
+	// asyn := app.AsynqClient
 	// Initialize Redis and Timeout
-	rd := app.Redis                                            // Obtain the Redis client instance from the 'app' object.
 	timeout := time.Duration(env.RequestTimeout) * time.Second // Calculate the timeout duration.
 	loc, err := time.LoadLocation(env.TimeZone)
 	if err != nil {
@@ -64,8 +62,8 @@ func initServer(app *bootstrap.Application) {
 	docs.SwaggerInfo.BasePath = "/api/v1"                                     // Set the base path of API endpoints.
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}                      // Define supported schemes.
 	// Initialize Router and Routes
-	router := NewRouter(env)                         // Initialize the HTTP router.
-	routes.Setup(env, timeout, router, db, rd, asyn) // Setup routes, middleware, and dependencies.
+	router := NewRouter(env)               // Initialize the HTTP router.
+	routes.Setup(env, timeout, router, db) // Setup routes, middleware, and dependencies.
 
 	// Configure and Start HTTP Server
 	server := &http.Server{

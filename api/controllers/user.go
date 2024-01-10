@@ -34,18 +34,18 @@ func (uc *UserController) GetUserDetail(c *gin.Context) {
 	rest.AssertNil(err)
 	user, err := uc.UserService.GetUserByID(c, uint(userID))
 	response := &domain.GetUserByIDResponse{
-		ID:           user.ID,
-		Username:     user.Username,
-		Phone:        user.Phone,
-		Email:        user.Email,
-		ShortName:    user.ShortName,
-		FullName:     user.FullName,
-		Field:        user.Field,
-		Avatar:       user.Avatar,
-		DepartmentID: user.DepartmentID,
-		Department:   user.Department,
-		Role:         user.Role,
-		Status:       user.Status,
+		ID:         user.ID,
+		Username:   user.Username,
+		Phone:      user.Phone,
+		Email:      user.Email,
+		ShortName:  user.ShortName,
+		FullName:   user.FullName,
+		Field:      user.Field,
+		Counter:    user.Counter,
+		Avatar:     user.Avatar,
+		Department: user.Department,
+		Role:       user.Role,
+		Status:     user.Status,
 	}
 	rest.AssertNil(err)
 	uc.SendData(c, response)
@@ -98,9 +98,30 @@ func (uc *UserController) GetAllEmployee(c *gin.Context) {
 	if user.Role != domain.AdminRole {
 		rest.AssertNil(errors.New("permission denied"))
 	}
-	users, err := uc.UserService.GetAllEmployee(c)
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	if page <= 0 {
+		page = 1
+	}
+	if limit <= 0 {
+		limit = 10
+	}
+	params := domain.GetAllUserRequest{
+		PaginationRequest: domain.PaginationRequest{
+			Limit: limit,
+			Page:  page,
+		},
+	}
+	total, totalCount, users, err := uc.UserService.GetAllEmployee(c, params)
 	rest.AssertNil(err)
-	uc.SendData(c, users)
+	uc.SendCustomData(c, map[string]interface{}{
+		"status":     "success",
+		"data":       users,
+		"total":      total,
+		"page":       page,
+		"limit":      limit,
+		"totalCount": totalCount,
+	})
 }
 
 // UpdateEmployee
@@ -111,7 +132,7 @@ func (uc *UserController) GetAllEmployee(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Success 200 {object} string
 func (uc *UserController) UpdateEmployee(c *gin.Context) {
-	body := &domain.UpdateUserRequest{}
+	body := &domain.User{}
 	rest.AssertNil(c.ShouldBindJSON(&body))
 	err := uc.UserService.UpdateEmployee(c, body)
 	rest.AssertNil(err)
@@ -143,6 +164,46 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 	body := &domain.User{}
 	rest.AssertNil(c.ShouldBindJSON(&body))
 	err := uc.UserService.CreateUser(c, body)
+	rest.AssertNil(err)
+	uc.Success(c)
+}
+
+// ChangePassword
+// @Router /users/change-password [post]
+// @Tags user
+// @Param payload body domain.ChangePasswordRequest true "payload"
+// @Summary Change password
+// @Security ApiKeyAuth
+// @Success 200 {object} string
+func (uc *UserController) ChangePassword(c *gin.Context) {
+	rawUserID, _ := c.Get("x-user-id")
+	userIDStr, ok := rawUserID.(string)
+	if !ok {
+		rest.AssertNil(errors.New("invalid user id"))
+	}
+	userID, err := strconv.Atoi(userIDStr)
+	rest.AssertNil(err)
+	body := &domain.ChangePasswordRequest{}
+	err = c.ShouldBindJSON(&body)
+	rest.AssertNil(err)
+	err = uc.UserService.ChangePassword(c, uint(userID), body.OldPassword, body.NewPassword)
+	// rest.AssertNil(err)
+	rest.AssertNil(err)
+	uc.Success(c)
+}
+
+// ResetPassword
+// @Router /users/reset-password [post]
+// @Tags user
+// @Param payload body domain.ResetPasswordRequest true "payload"
+// @Summary Reset password
+// @Security ApiKeyAuth
+// @Success 200 {object} string
+func (uc *UserController) ResetPassword(c *gin.Context) {
+	body := &domain.ResetPasswordRequest{}
+	err := c.ShouldBindJSON(&body)
+	rest.AssertNil(err)
+	err = uc.UserService.ResetPassword(c, body.ID)
 	rest.AssertNil(err)
 	uc.Success(c)
 }

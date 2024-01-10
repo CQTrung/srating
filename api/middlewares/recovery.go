@@ -23,7 +23,6 @@ func Recovery() gin.HandlerFunc {
 					Message: err.(error).Error(),
 				}
 				c.JSON(code, response)
-
 			}
 		}()
 		c.Next()

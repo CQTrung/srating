@@ -60,7 +60,7 @@ package tasks
 // 	fmt.Println("Đã nhận task")
 // 	var p FCMNotifyPayload
 // 	if err := json.Unmarshal(t.Payload(), &p); err != nil {
-// 		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
+// 		return fmt.Errorf("json.Unmarshal failed: %v: %w", errq.SkipRetry)
 // 	}
 // 	var order, err = processor.OrderService.FindById(ctx, p.OrderID)
 // 	if err != nil {

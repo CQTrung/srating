@@ -6,7 +6,7 @@ import (
 
 var (
 	ErrUserExisted         = BadRequestError("Tài khoản đã tồn tại. Vui lòng kiểm tra lại thông tin tài khoản")
-	ErrInvalidCredentials  = BadRequestError("Thông tin đăng nhập không chính xác")
+	ErrInvalidCredentials  = BadRequestError("Thông tin nhập không chính xác")
 	ErrInvalidUser         = BadRequestError("Người dùng không hợp lệ")
 	ErrInternalServerError = InternalServerError("Internal Server Error")
 	ErrConflict            = BadRequestError("Your Item already exist")

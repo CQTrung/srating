@@ -16,8 +16,3 @@ install:
 	go install github.com/securego/gosec/v2/cmd/gosec@latest
 	go install github.com/go-critic/go-critic/cmd/gocritic@latest
 	go install mvdan.cc/gofumpt@latest
-push:
-	@git fetch origin dev
-	@git add .
-	@git commit -m "update"
-	@git push origin dev

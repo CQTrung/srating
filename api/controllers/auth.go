@@ -65,6 +65,7 @@ func (uc *AuthController) Login(c *gin.Context) {
 		FullName:     user.FullName,
 		Field:        user.Field,
 		Avatar:       user.Avatar,
+		Counter:      user.Counter,
 		Department:   user.Department,
 		Role:         user.Role,
 		Status:       domain.Status(user.Status),

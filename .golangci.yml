@@ -318,6 +318,12 @@ linters-settings:
       - io/ioutil.ReadFile
       - io.Copy(*bytes.Buffer)
       - io.Copy(os.Stdout)
+  exhaustive:
+    # Program elements to check for exhaustiveness.
+    # Default: [ switch ]
+    check:
+      - switch
+      - map
 
   gocognit:
     # Minimal code complexity to report.
@@ -325,12 +331,18 @@ linters-settings:
     min-complexity: 20
 
   govet:
+    enable-all: true
     disable:
       - fieldalignment # I'm ok to waste some bytes
+    settings:
+      shadow:
+        # Whether to be strict about shadowing; can be noisy.
+        # Default: false
+        strict: true
 
   nakedret:
     # No naked returns, ever.
-    max-func-lines: 1 # Default: 30
+    max-func-lines: 0 # Default: 30
 
   nolintlint:
     # Enable to require an explanation of nonzero length after each nolint directive.

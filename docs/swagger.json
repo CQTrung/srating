@@ -85,6 +85,154 @@
                 }
             }
         },
+        "/categories": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Get all category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "level",
+                        "name": "level",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "start_date",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "end_date",
+                        "name": "end_date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Update category",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Create category",
+                "parameters": [
+                    {
+                        "description": "payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/categories/:id": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Get category by detail",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Delete category",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/dashboard": {
             "get": {
                 "security": [
@@ -95,6 +243,154 @@
                 "tags": [
                     "dashboard"
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "department"
+                ],
+                "summary": "Get all department",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "level",
+                        "name": "level",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "start_date",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "end_date",
+                        "name": "end_date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "department"
+                ],
+                "summary": "Update department",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "department"
+                ],
+                "summary": "Create department",
+                "parameters": [
+                    {
+                        "description": "payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Department"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/:id": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "department"
+                ],
+                "summary": "Get department by detail",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "department"
+                ],
+                "summary": "Delete department",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -215,8 +511,8 @@
                 }
             }
         },
-        "/feedbacks/search": {
-            "post": {
+        "/feedbacks/:id/level": {
+            "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
@@ -225,7 +521,37 @@
                 "tags": [
                     "feedback"
                 ],
-                "summary": "Search feedback",
+                "summary": "Get feedback by level",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/feedbacks/level": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "feedback"
+                ],
+                "summary": "Get feedback by level",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -327,6 +653,38 @@
                 }
             }
         },
+        "/users/change-password": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Change password",
+                "parameters": [
+                    {
+                        "description": "payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ChangePasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users/employees": {
             "get": {
                 "security": [
@@ -399,6 +757,38 @@
                 }
             }
         },
+        "/users/reset-password": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Reset password",
+                "parameters": [
+                    {
+                        "description": "payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users/status": {
             "put": {
                 "security": [
@@ -422,9 +812,43 @@
         }
     },
     "definitions": {
+        "domain.Category": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ChangePasswordRequest": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "type": "string"
+                },
+                "old_password": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.CreateUserRequest": {
             "type": "object",
             "properties": {
+                "counter": {
+                    "type": "string"
+                },
                 "department_id": {
                     "type": "integer"
                 },
@@ -483,12 +907,48 @@
         "domain.Feedback": {
             "type": "object",
             "required": [
-                "level",
                 "user_id"
             ],
             "properties": {
                 "created_at": {
                     "type": "string"
+                },
+                "feedback_category": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.FeedbackCategory"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.FeedbackCategory": {
+            "type": "object",
+            "required": [
+                "category_id",
+                "feedback_id",
+                "level"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "feedback_id": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -501,9 +961,6 @@
                 },
                 "updated_at": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -544,6 +1001,9 @@
             "type": "object",
             "properties": {
                 "access_token": {
+                    "type": "string"
+                },
+                "counter": {
                     "type": "string"
                 },
                 "department": {
@@ -591,7 +1051,6 @@
                     "type": "string"
                 },
                 "filename": {
-                    "description": "Type     string `gorm:\"column:type\" json:\"type\"`",
                     "type": "string"
                 },
                 "id": {
@@ -618,6 +1077,14 @@
             "properties": {
                 "access_token": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.ResetPasswordRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -648,6 +1115,9 @@
         "domain.UpdateUserRequest": {
             "type": "object",
             "properties": {
+                "counter": {
+                    "type": "string"
+                },
                 "department_id": {
                     "type": "integer"
                 },
@@ -663,9 +1133,6 @@
                 "id": {
                     "type": "integer"
                 },
-                "password": {
-                    "type": "string"
-                },
                 "phone": {
                     "type": "string"
                 },
@@ -677,9 +1144,6 @@
                 },
                 "status": {
                     "$ref": "#/definitions/domain.Status"
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         },
@@ -696,6 +1160,9 @@
                 "username"
             ],
             "properties": {
+                "counter": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -725,6 +1192,9 @@
                 },
                 "media": {
                     "$ref": "#/definitions/domain.Media"
+                },
+                "media_id": {
+                    "type": "integer"
                 },
                 "password": {
                     "type": "string"

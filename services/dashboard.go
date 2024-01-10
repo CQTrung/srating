@@ -9,28 +9,31 @@ import (
 )
 
 type dashboardService struct {
-	feedbackService domain.FeedbackService
-	userService     domain.UserService
-	contextTimeout  time.Duration
+	feedbackCategoryService domain.FeedbackCategoryService
+	userService             domain.UserService
+	contextTimeout          time.Duration
 }
 
-func NewDashboardService(feedbackService domain.FeedbackService, userService domain.UserService, timeout time.Duration) domain.DashboardService {
+func NewDashboardService(feedbackCategoryService domain.FeedbackCategoryService,
+	userService domain.UserService,
+	timeout time.Duration,
+) domain.DashboardService {
 	return &dashboardService{
-		feedbackService: feedbackService,
-		userService:     userService,
-		contextTimeout:  timeout,
+		feedbackCategoryService: feedbackCategoryService,
+		userService:             userService,
+		contextTimeout:          timeout,
 	}
 }
 
 func (u *dashboardService) Dashboard(c context.Context) (map[string]int64, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
-	resultByType, err := u.feedbackService.CountFeedbackByType(ctx)
+	resultByType, err := u.feedbackCategoryService.CountFeedbackByType(ctx)
 	if err != nil {
 		utils.LogError(err, "Failed to get feedback by type")
 		return nil, err
 	}
-	totalFeedback, err := u.feedbackService.GetTotalFeedBack(ctx)
+	totalFeedback, err := u.feedbackCategoryService.GetTotalFeedbackCategory(ctx)
 	if err != nil {
 		utils.LogError(err, "Failed to get total feedback")
 		return nil, err

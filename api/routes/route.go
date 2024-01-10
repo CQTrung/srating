@@ -9,29 +9,29 @@ import (
 	"srating/bootstrap"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hibiken/asynq"
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
-func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *gorm.DB, rd *redis.Client, asyn *asynq.Client) {
+func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *gorm.DB) {
 	// All Public API
 	apiV1Router := router.Group("/api/v1")
 	publicRouter := apiV1Router.Group("")
 
 	// All Public API
-	public.NewStatusRouter(env, timeout, publicRouter, db, rd, asyn)
-	public.NewAuthRouter(env, timeout, publicRouter, db, rd, asyn)
-	public.NewMediaRouter(env, timeout, publicRouter, db, rd, asyn)
-	public.NewFeedbackRouter(env, timeout, publicRouter, db, rd, asyn)
+	public.NewStatusRouter(env, timeout, publicRouter, db)
+	public.NewAuthRouter(env, timeout, publicRouter, db)
+	public.NewMediaRouter(env, timeout, publicRouter, db)
+	public.NewFeedbackRouter(env, timeout, publicRouter, db)
 
 	protectedRouter := apiV1Router.Group("")
 	adminAPIRouter := protectedRouter.Group("/")
 
 	// All Admin API
-	adminAPIRouter.Use(middlewares.AdminAuthMiddleware(env.AccessTokenSecret))
-	admin.NewUserRouter(env, timeout, adminAPIRouter, db, rd, asyn)
-	admin.NewMediaRouter(env, timeout, adminAPIRouter, db, rd, asyn)
-	admin.NewFeedbackRouter(env, timeout, adminAPIRouter, db, rd, asyn)
-	admin.NewDashboardRouter(env, timeout, adminAPIRouter, db, rd, asyn)
+	adminAPIRouter.Use(middlewares.JwtAuthMiddleware(env.AccessTokenSecret))
+	admin.NewUserRouter(env, timeout, adminAPIRouter, db)
+	admin.NewMediaRouter(env, timeout, adminAPIRouter, db)
+	admin.NewFeedbackRouter(env, timeout, adminAPIRouter, db)
+	admin.NewDashboardRouter(env, timeout, adminAPIRouter, db)
+	admin.NewDepartmentRouter(env, timeout, adminAPIRouter, db)
+	admin.NewCategoryRouter(env, timeout, adminAPIRouter, db)
 }
