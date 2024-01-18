@@ -75,5 +75,6 @@ func (r *categoryRepository) UpdateCategory(c context.Context, category *domain.
 
 func (r *categoryRepository) DeleteCategory(c context.Context, id uint) error {
 	db := r.GetDB(c)
+	db.Where("id = ?", id).Delete(&domain.Category{})
 	return db.Delete(&domain.Category{}, id).Error
 }
