@@ -48,12 +48,12 @@ func (u *feedbackService) CreateFeedbackV2(c context.Context, input *domain.Feed
 		return err
 	}
 	utils.LogData(input, "input")
-	levels := strings.Split(input.Note, ";")
+	answers := strings.Split(input.Note, ";")
 	feedbackCategories := []*domain.FeedbackCategory{}
-	for id, level := range levels {
+	for id, answer := range answers {
 		feedbackCategory := &domain.FeedbackCategory{
 			FeedbackID: input.ID,
-			Level:      level,
+			Answer:     answer,
 			CategoryID: uint(id + 1),
 		}
 		feedbackCategories = append(feedbackCategories, feedbackCategory)

@@ -18,7 +18,6 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 	publicRouter := apiV1Router.Group("")
 
 	// All Public API
-	public.NewStatusRouter(env, timeout, publicRouter, db)
 	public.NewAuthRouter(env, timeout, publicRouter, db)
 	public.NewMediaRouter(env, timeout, publicRouter, db)
 	public.NewFeedbackRouter(env, timeout, publicRouter, db)
@@ -28,7 +27,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 
 	// All Admin API
 	adminAPIRouter.Use(middlewares.JwtAuthMiddleware(env.AccessTokenSecret))
-	admin.NewUserRouter(env, timeout, adminAPIRouter, db)
+	admin.NewStatusRouter(env, timeout, publicRouter, db)
 	admin.NewMediaRouter(env, timeout, adminAPIRouter, db)
 	admin.NewFeedbackRouter(env, timeout, adminAPIRouter, db)
 	admin.NewDashboardRouter(env, timeout, adminAPIRouter, db)
@@ -36,6 +35,11 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 	admin.NewCategoryRouter(env, timeout, adminAPIRouter, db)
 
 	apiV2Router := router.Group("/api/v2")
-	adminV2APIRouter := apiV2Router.Group("")
-	public.NewFeedbackV2Router(env, timeout, adminV2APIRouter, db)
+	publicV2Router := apiV2Router.Group("")
+	public.NewAuthRouter(env, timeout, publicV2Router, db)
+	public.NewMediaRouter(env, timeout, publicV2Router, db)
+	public.NewFeedbackV2Router(env, timeout, publicV2Router, db)
+	adminV2Router := apiV2Router.Group("")
+	adminV2Router.Use(middlewares.JwtAuthMiddleware(env.AccessTokenSecret))
+	admin.NewUserRouter(env, timeout, adminV2Router, db)
 }

@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewFeedbackRouter(env *bootstrap.Env, timeout time.Duration, group *gin.RouterGroup, db *gorm.DB) {
+func NewFeedbackV2Router(env *bootstrap.Env, timeout time.Duration, group *gin.RouterGroup, db *gorm.DB) {
 	var (
 		fcr = repositories.NewFeedbackCategoryRepository(db)
 		mr  = repositories.NewFeedbackRepository(db)
@@ -24,6 +24,5 @@ func NewFeedbackRouter(env *bootstrap.Env, timeout time.Duration, group *gin.Rou
 		FeedbackService: mu,
 		Env:             env,
 	}
-	group.POST("/feedbacks", fc.CreateFeedback)
-	group.GET("/feedbacks/:id/level", fc.GetFeedbackLevelByUserID)
+	group.POST("/feedbacks", fc.CreateFeedbackV2)
 }

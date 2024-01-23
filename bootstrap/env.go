@@ -33,7 +33,6 @@ type Env struct {
 	EmailSenderAddress      string `mapstructure:"EMAIL_SENDER_ADDRESS"`
 	EmailSenderPassword     string `mapstructure:"EMAIL_SENDER_PASSWORD"`
 	TimeZone                string `mapstructure:"TIME_ZONE"`
-	LineChannelSecret       string `mapstructure:"LINE_CHANNEL_SECRET"`
 }
 
 // InitViper initializes the Viper configuration.

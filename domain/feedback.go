@@ -6,9 +6,10 @@ import (
 
 type Feedback struct {
 	HardModel
-	UserID uint   `json:"user_id" gorm:"column:user_id" validate:"required"`
-	Level  Level  `json:"level" gorm:"column:level"`
-	Note   string `json:"note" gorm:"column:note"`
+	UserID             uint                `json:"user_id" gorm:"column:user_id" validate:"required"`
+	Level              Level               `json:"level" gorm:"column:level"`
+	Note               string              `json:"note" gorm:"column:note"`
+	FeedbackCategories []*FeedbackCategory `json:"feedback_categories" gorm:"foreignkey:FeedbackID"`
 }
 
 type FeedbackService interface {
