@@ -16,7 +16,7 @@ const (
 type Feedback struct {
 	HardModel
 	UserID uint   `json:"user_id" gorm:"column:user_id" validate:"required"`
-	Level  Level  `json:"level" gorm:"column:level" validate:"required"`
+	Level  Level  `json:"level" gorm:"column:level"`
 	Note   string `json:"note" gorm:"column:note"`
 }
 
