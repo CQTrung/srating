@@ -14,20 +14,19 @@
 !go.sum
 !go.mod
 
-!README.md
 !LICENSE
 
 !Makefile
 
-!build_centos.sh
+!*.md
 
-!gitlab-ci.yml
+!*.env
+
+!*.sh
+
+!*.yml
 
 !Dockerfile
-
-!docker-compose.yml
-
-!golangci.yml
 
 # ...even if they are in subdirectories
 !*/
