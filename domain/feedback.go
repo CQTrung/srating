@@ -6,10 +6,11 @@ import (
 
 type Feedback struct {
 	HardModel
-	UserID             uint                `json:"user_id" gorm:"column:user_id" validate:"required"`
-	Note               string              `json:"note" gorm:"column:note"`
-	FeedbackCategories []*FeedbackCategory `json:"feedback_categories,omitempty" gorm:"foreignKey:FeedbackID"`
+	UserID uint   `json:"user_id" gorm:"column:user_id" validate:"required"`
+	Level  Level  `json:"level" gorm:"column:level"`
+	Note   string `json:"note" gorm:"column:note"`
 }
+
 type FeedbackService interface {
 	CreateFeedback(c context.Context, department *Feedback) error
 	CreateFeedbackV2(c context.Context, department *Feedback) error
