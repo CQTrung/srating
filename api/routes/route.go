@@ -24,7 +24,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 	public.NewFeedbackRouter(env, timeout, publicRouter, db)
 
 	protectedRouter := apiV1Router.Group("")
-	adminAPIRouter := protectedRouter.Group("/")
+	adminAPIRouter := protectedRouter.Group("")
 
 	// All Admin API
 	adminAPIRouter.Use(middlewares.JwtAuthMiddleware(env.AccessTokenSecret))
@@ -34,4 +34,8 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 	admin.NewDashboardRouter(env, timeout, adminAPIRouter, db)
 	admin.NewDepartmentRouter(env, timeout, adminAPIRouter, db)
 	admin.NewCategoryRouter(env, timeout, adminAPIRouter, db)
+
+	apiV2Router := router.Group("/api/v2")
+	adminV2APIRouter := apiV2Router.Group("")
+	public.NewFeedbackV2Router(env, timeout, adminV2APIRouter, db)
 }

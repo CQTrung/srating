@@ -12,6 +12,7 @@ type Feedback struct {
 }
 type FeedbackService interface {
 	CreateFeedback(c context.Context, department *Feedback) error
+	CreateFeedbackV2(c context.Context, department *Feedback) error
 	GetAllFeedback(c context.Context, input GetAllFeedbackRequest) (int64, int64, []*Feedback, error)
 	GetFeedbackDetail(c context.Context, id uint) (*Feedback, error)
 	GetFeedbackByLevel(c context.Context, level int, userID uint) ([]*Feedback, error)

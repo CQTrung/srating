@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"srating/domain"
@@ -32,6 +33,32 @@ func (u *feedbackService) CreateFeedback(c context.Context, input *domain.Feedba
 		utils.LogError(err, "Failed to validate input")
 		return err
 	}
+	if err := u.feedbackRepository.CreateFeedback(ctx, input); err != nil {
+		utils.LogError(err, "Failed to create feedback")
+		return err
+	}
+	return nil
+}
+
+func (u *feedbackService) CreateFeedbackV2(c context.Context, input *domain.Feedback) error {
+	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
+	defer cancel()
+	if err := utils.Validate(input); err != nil {
+		utils.LogError(err, "Failed to validate input")
+		return err
+	}
+	utils.LogData(input, "input")
+	levels := strings.Split(input.Note, ";")
+	feedbackCategories := []*domain.FeedbackCategory{}
+	for id, level := range levels {
+		feedbackCategory := &domain.FeedbackCategory{
+			FeedbackID: input.ID,
+			Level:      level,
+			CategoryID: uint(id + 1),
+		}
+		feedbackCategories = append(feedbackCategories, feedbackCategory)
+	}
+	input.FeedbackCategories = feedbackCategories
 	if err := u.feedbackRepository.CreateFeedback(ctx, input); err != nil {
 		utils.LogError(err, "Failed to create feedback")
 		return err

@@ -33,6 +33,14 @@ func (t *FeedbackController) CreateFeedback(c *gin.Context) {
 	t.Success(c)
 }
 
+func (t *FeedbackController) CreateFeedbackV2(c *gin.Context) {
+	input := &domain.Feedback{}
+	rest.AssertNil(c.ShouldBindJSON(&input))
+	err := t.FeedbackService.CreateFeedbackV2(c, input)
+	rest.AssertNil(err)
+	t.Success(c)
+}
+
 // GetAllFeedback
 // @Router /feedbacks [get]
 // @Tags feedback

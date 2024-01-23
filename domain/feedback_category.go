@@ -18,7 +18,7 @@ type FeedbackCategory struct {
 	CategoryID uint      `json:"category_id" gorm:"column:category_id" validate:"required"`
 	FeedbackID uint      `json:"feedback_id" gorm:"column:feedback_id"`
 	Category   *Category `json:"category,omitempty" gorm:"foreignKey:CategoryID"`
-	Level      Level     `json:"level" gorm:"column:level" validate:"required"`
+	Level      string    `json:"level" gorm:"column:level" validate:"required"`
 	Note       string    `json:"note" gorm:"column:note"`
 }
 type FeedbackCategoryService interface {
