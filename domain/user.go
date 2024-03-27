@@ -103,8 +103,8 @@ type CreateUserRequest struct {
 	FullName     string `json:"full_name"`
 	Counter      string `json:"counter"`
 	Field        string `json:"field"`
-	DepartmentID uint   `json:"department_id"`
 	Role         Role   `json:"role"`
+	DepartmentID uint   `json:"department_id"`
 	Status       Status `json:"status"`
 }
 type UpdateUserRequest struct {

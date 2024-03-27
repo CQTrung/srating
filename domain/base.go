@@ -7,10 +7,10 @@ import (
 )
 
 type Model struct {
-	ID        uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt time.Time      `json:"created_at" gorm:"<-:create"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+	ID        uint           `json:"id" gorm:"primaryKey"`
 }
 type HardModel struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`

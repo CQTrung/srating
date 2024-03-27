@@ -27,6 +27,7 @@ type UserController struct {
 func (uc *UserController) GetUserDetail(c *gin.Context) {
 	rawUserID, _ := c.Get("x-user-id")
 	userIDStr, ok := rawUserID.(string)
+
 	if !ok {
 		rest.AssertNil(errors.New("invalid user id"))
 	}

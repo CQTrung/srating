@@ -7,32 +7,32 @@ import (
 )
 
 type Env struct {
-	AppEnv                  string `mapstructure:"APP_ENV"`
-	ServerAddress           string `mapstructure:"SERVER_ADDRESS"`
-	RequestTimeout          int    `mapstructure:"REQUEST_TIMEOUT"`
-	ReadTimeout             int    `mapstructure:"READ_TIMEOUT"`
-	WriteTimeout            int    `mapstructure:"WRITE_TIMEOUT"`
-	IdleTimeout             int    `mapstructure:"IDLE_TIMEOUT"`
-	DatabaseURL             string `mapstructure:"DB_URL"`
-	AccessTokenExpiryHour   int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOUR"`
-	RefreshTokenExpiryHour  int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
-	RememberTokenExpiryHour int    `mapstructure:"REMEMBER_TOKEN_EXPIRY_HOUR"`
-	AccessTokenSecret       string `mapstructure:"ACCESS_TOKEN_SECRET"`
-	RefreshTokenSecret      string `mapstructure:"REFRESH_TOKEN_SECRET"`
 	GinMode                 string `mapstructure:"GIN_MODE"`
+	EmailSenderName         string `mapstructure:"EMAIL_SENDER_NAME"`
 	BaseURL                 string `mapstructure:"BASE_URL"`
 	DBHost                  string `mapstructure:"DB_HOST"`
-	DBPort                  int    `mapstructure:"DB_PORT"`
-	DBName                  string `mapstructure:"DB_NAME"`
-	DBUser                  string `mapstructure:"DB_USER"`
-	DBPassword              string `mapstructure:"DB_PASSWORD"`
-	RedisURL                string `mapstructure:"REDIS_URL"`
-	RedisPassword           string `mapstructure:"REDIS_PASSWORD"`
-	RedisDB                 int    `mapstructure:"REDIS_DB"`
-	EmailSenderName         string `mapstructure:"EMAIL_SENDER_NAME"`
-	EmailSenderAddress      string `mapstructure:"EMAIL_SENDER_ADDRESS"`
+	AppEnv                  string `mapstructure:"APP_ENV"`
 	EmailSenderPassword     string `mapstructure:"EMAIL_SENDER_PASSWORD"`
+	DatabaseURL             string `mapstructure:"DB_URL"`
+	ServerAddress           string `mapstructure:"SERVER_ADDRESS"`
+	EmailSenderAddress      string `mapstructure:"EMAIL_SENDER_ADDRESS"`
+	DBUser                  string `mapstructure:"DB_USER"`
+	AccessTokenSecret       string `mapstructure:"ACCESS_TOKEN_SECRET"`
+	RefreshTokenSecret      string `mapstructure:"REFRESH_TOKEN_SECRET"`
 	TimeZone                string `mapstructure:"TIME_ZONE"`
+	RedisPassword           string `mapstructure:"REDIS_PASSWORD"`
+	RedisURL                string `mapstructure:"REDIS_URL"`
+	DBPassword              string `mapstructure:"DB_PASSWORD"`
+	DBName                  string `mapstructure:"DB_NAME"`
+	AccessTokenExpiryHour   int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOUR"`
+	DBPort                  int    `mapstructure:"DB_PORT"`
+	ReadTimeout             int    `mapstructure:"READ_TIMEOUT"`
+	RequestTimeout          int    `mapstructure:"REQUEST_TIMEOUT"`
+	RedisDB                 int    `mapstructure:"REDIS_DB"`
+	RememberTokenExpiryHour int    `mapstructure:"REMEMBER_TOKEN_EXPIRY_HOUR"`
+	RefreshTokenExpiryHour  int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
+	IdleTimeout             int    `mapstructure:"IDLE_TIMEOUT"`
+	WriteTimeout            int    `mapstructure:"WRITE_TIMEOUT"`
 }
 
 // InitViper initializes the Viper configuration.
