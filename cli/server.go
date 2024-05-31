@@ -15,10 +15,9 @@ import (
 	"srating/utils"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewRouter(env *bootstrap.Env) *gin.Engine {
@@ -42,58 +41,48 @@ func server(app *bootstrap.Application) *cobra.Command {
 func initServer(app *bootstrap.Application) {
 	env := app.Env
 	db := app.DB
-	asyn := app.AsynqClient
-	// init
-	// Initialize Redis and Timeout
-	rd := app.Redis                                            // Obtain the Redis client instance from the 'app' object.
-	timeout := time.Duration(env.RequestTimeout) * time.Second // Calculate the timeout duration.
+
+	timeout := time.Duration(env.RequestTimeout) * time.Second
 	loc, err := time.LoadLocation(env.TimeZone)
 	if err != nil {
 		panic(err)
 	}
 	time.Local = loc
 
-	// Configure Logger (zerolog)
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix // Set the time field format to Unix time.
+	docs.SwaggerInfo.Title = "S-Rating API"
+	docs.SwaggerInfo.Description = "This is a sample server S-Rating server."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = env.BaseURL
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
-	// Configure Swagger Documentation (docs)
-	docs.SwaggerInfo.Title = "S-Rating API"                                   // Set the title of the Swagger API documentation.
-	docs.SwaggerInfo.Description = "This is a sample server S-Rating server." // Set the API description.
-	docs.SwaggerInfo.Version = "1.0"                                          // Set the API version.
-	docs.SwaggerInfo.Host = env.BaseURL                                       // Set the API's base URL.
-	docs.SwaggerInfo.BasePath = "/api/v1"                                     // Set the base path of API endpoints.
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}                      // Define supported schemes.
-	// Initialize Router and Routes
-	router := NewRouter(env)                         // Initialize the HTTP router.
-	routes.Setup(env, timeout, router, db, rd, asyn) // Setup routes, middleware, and dependencies.
+	router := NewRouter(env)
+	routes.Setup(env, timeout, router, db)
 
-	// Configure and Start HTTP Server
 	server := &http.Server{
-		Addr:         env.ServerAddress,                             // Set the server address from configuration.
-		Handler:      router,                                        // Set the HTTP router as the server handler.
-		ReadTimeout:  time.Duration(env.ReadTimeout) * time.Second,  // Set the read timeout for incoming requests.
-		WriteTimeout: time.Duration(env.WriteTimeout) * time.Second, // Set the write timeout for outgoing responses.
-		IdleTimeout:  time.Duration(env.IdleTimeout) * time.Second,  // Set the idle timeout for persistent connections.
+		Addr:         env.ServerAddress,
+		Handler:      router,
+		ReadTimeout:  time.Duration(env.ReadTimeout) * time.Second,
+		WriteTimeout: time.Duration(env.WriteTimeout) * time.Second,
+		IdleTimeout:  time.Duration(env.IdleTimeout) * time.Second,
 	}
-	utils.LogInfo("Server started at " + env.ServerAddress) // Log the server start.
+	utils.LogInfo("Server started at " + env.ServerAddress)
 
-	// Signal Handling and Graceful Shutdown
-	sigCh := make(chan os.Signal, 1)                      // Create a signal channel to capture termination/interruption signals.
-	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT) // Notify the channel for SIGTERM and SIGINT signals.
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			panic(err)
 		}
 	}()
-	<-sigCh // Block program execution until a termination/interruption signal is received.
+	<-sigCh
 
-	// Gracefully Shutdown Server
-	ctx, cancel := context.WithTimeout(context.Background(), timeout) // Create a context with a timeout of 5 seconds.
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer app.CloseConnection()
-	defer cancel() // Defer the cancellation of the context.
+	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		panic(err) // Panic if there's an error during graceful server shutdown.
+		panic(err)
 	}
 
-	utils.LogInfo("Server stopped") // Log the server stop.
+	utils.LogInfo("Server stopped")
 }

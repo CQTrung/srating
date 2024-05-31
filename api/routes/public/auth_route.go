@@ -10,15 +10,13 @@ import (
 	repositories "srating/repositories"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hibiken/asynq"
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
-func NewAuthRouter(env *bootstrap.Env, timeout time.Duration, group *gin.RouterGroup, db *gorm.DB, rd *redis.Client, asyn *asynq.Client) {
+func NewAuthRouter(env *bootstrap.Env, timeout time.Duration, group *gin.RouterGroup, db *gorm.DB) {
 	var (
 		ur = repositories.NewUserRepository(db)
-		au = services.NewAuthService(ur, asyn, timeout)
+		au = services.NewAuthService(ur, timeout)
 	)
 	fc := controllers.AuthController{
 		AuthService: au,

@@ -7,8 +7,6 @@ import (
 
 	"srating/domain"
 	"srating/utils"
-
-	"github.com/hibiken/asynq"
 )
 
 type userService struct {
@@ -16,7 +14,7 @@ type userService struct {
 	contextTimeout time.Duration
 }
 
-func NewUserService(userRepository domain.UserRepository, asynqClient *asynq.Client, timeout time.Duration) domain.UserService {
+func NewUserService(userRepository domain.UserRepository, timeout time.Duration) domain.UserService {
 	return &userService{
 		userRepository: userRepository,
 		contextTimeout: timeout,

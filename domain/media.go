@@ -7,7 +7,6 @@ import (
 type Media struct {
 	Model
 	URL string `gorm:"column:url" json:"url"`
-	// Type     string `gorm:"column:type" json:"type"`
 	FileName string `gorm:"column:filename" json:"filename"`
 }
 type MediaRepository interface {

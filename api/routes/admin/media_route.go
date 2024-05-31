@@ -10,12 +10,10 @@ import (
 	repositories "srating/repositories"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hibiken/asynq"
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
-func NewMediaRouter(env *bootstrap.Env, timeout time.Duration, group *gin.RouterGroup, db *gorm.DB, rd *redis.Client, asyn *asynq.Client) {
+func NewMediaRouter(env *bootstrap.Env, timeout time.Duration, group *gin.RouterGroup, db *gorm.DB) {
 	var (
 		mr = repositories.NewMediaRepository(db)
 		mu = services.NewMediaService(mr, timeout)

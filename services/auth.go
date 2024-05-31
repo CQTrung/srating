@@ -18,10 +18,9 @@ type authService struct {
 	contextTimeout time.Duration
 }
 
-func NewAuthService(userRepository domain.UserRepository, asynqClient *asynq.Client, timeout time.Duration) domain.AuthService {
+func NewAuthService(userRepository domain.UserRepository, timeout time.Duration) domain.AuthService {
 	return &authService{
 		userRepository: userRepository,
-		asynqClient:    asynqClient,
 		contextTimeout: timeout,
 	}
 }
