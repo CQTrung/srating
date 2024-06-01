@@ -33,6 +33,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 	admin.NewDashboardRouter(env, timeout, adminAPIRouter, db)
 	admin.NewDepartmentRouter(env, timeout, adminAPIRouter, db)
 	admin.NewCategoryRouter(env, timeout, adminAPIRouter, db)
+	admin.NewUserRouter(env, timeout, adminAPIRouter, db)
 
 	apiV2Router := router.Group("/api/v2")
 	publicV2Router := apiV2Router.Group("")
