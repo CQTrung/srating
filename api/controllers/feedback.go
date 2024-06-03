@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"strconv"
 
 	"srating/bootstrap"
@@ -13,6 +14,7 @@ import (
 
 type FeedbackController struct {
 	FeedbackService domain.FeedbackService
+	UserService     domain.UserService
 	Env             *bootstrap.Env
 	*rest.JSONRender
 }
@@ -54,12 +56,25 @@ func (t *FeedbackController) CreateFeedbackV2(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Success 200 {object} string
 func (t *FeedbackController) GetAllFeedback(c *gin.Context) {
+	rawUserID, _ := c.Get("x-user-id")
+
+	userIDStr, ok := rawUserID.(string)
+	if !ok {
+		rest.AssertNil(errors.New("invalid user id"))
+	}
+	userId, err := strconv.Atoi(userIDStr)
+	rest.AssertNil(err)
+	
+	user, err := t.UserService.GetUserByID(c, uint(userId))
+	rest.AssertNil(err)
+
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	userID, _ := strconv.Atoi(c.Query("user_id"))
 	level, _ := strconv.Atoi(c.Query("level"))
 	startDate, _ := strconv.Atoi(c.Query("start_date"))
 	endDate, _ := strconv.Atoi(c.Query("end_date"))
+
 	input := domain.GetAllFeedbackRequest{
 		UserID:    uint(userID),
 		Level:     domain.Level(level),
@@ -70,7 +85,7 @@ func (t *FeedbackController) GetAllFeedback(c *gin.Context) {
 			Page:  page,
 		},
 	}
-	total, totalCount, result, err := t.FeedbackService.GetAllFeedback(c, input)
+	total, totalCount, result, err := t.FeedbackService.GetAllFeedback(c, user.LocationID, input)
 	rest.AssertNil(err)
 	t.SendCustomData(c, map[string]interface{}{
 		"status":     "success",

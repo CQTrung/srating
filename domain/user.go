@@ -54,31 +54,29 @@ type User struct {
 type UserService interface {
 	GetUserByID(c context.Context, id uint) (*User, error)
 	ChangeStatus(c context.Context, id uint, status Status) error
-	GetAllEmployee(c context.Context, input GetAllUserRequest) (int64, int64, []*User, error)
-	// GetAllEmployeeByLocation(c context.Context, idLocation uint, input GetAllUserRequest) (int64, int64, []*User, error)
-	CountUserByRole(c context.Context) (map[string]int64, error)
-	CountTotalField(c context.Context) (int64, error)
+	GetAllEmployee(c context.Context, idLocation uint, input GetAllUserRequest) (int64, int64, []*User, error)
+	CountUserByRole(c context.Context, idLocation uint) (map[string]int64, error)
+	CountTotalField(c context.Context, idLocation uint) (int64, error)
 	UpdateEmployee(c context.Context, user *User) error
 	DeleteEmployee(c context.Context, id uint) error
 	CreateUser(c context.Context, user *User) error
 	ChangePassword(c context.Context, id uint, oldPassword, newPassword string) error
 	ResetPassword(c context.Context, id uint) error
-	AssignToLocation(c context.Context, idUser uint, idLocation uint) error
+	AssignToLocation(c context.Context, input AssignLocationRequest) error
 }
 type UserRepository interface {
 	UpdateUser(c context.Context, user *User) error
 	GetUserByID(c context.Context, id uint) (*User, error)
 	GetUserByUsername(c context.Context, username string) (*User, error)
 	ChangeStatus(c context.Context, id uint, status Status) error
-	GetAllEmployee(c context.Context, input GetAllUserRequest) (int64, int64, []*User, error)
-	// GetAllEmployeeByLocation(c context.Context, idLocation uint, input GetAllUserRequest) (int64, int64, []*User, error)
-	CountUserByRole(c context.Context) ([]*GetUserByRoleResponse, error)
-	CountTotalField(c context.Context) (int64, error)
+	GetAllEmployee(c context.Context, idLocation uint, input GetAllUserRequest) (int64, int64, []*User, error)
+	CountUserByRole(c context.Context, idLocation uint) ([]*GetUserByRoleResponse, error)
+	CountTotalField(c context.Context, idLocation uint) (int64, error)
 	DeleteEmployee(c context.Context, id uint) error
 	CreateUser(c context.Context, user *User) error
 	ChangePassword(c context.Context, id uint, oldPassword, newPassword string) error
 	ResetPassword(c context.Context, id uint, newPassword string) error
-	AssignToLocation(c context.Context, idUser uint, idLocation uint) error
+	AssignToLocation(c context.Context, input AssignLocationRequest) error
 }
 type GetUserByIDResponse struct {
 	ID           uint        `json:"id"`
@@ -113,6 +111,7 @@ type CreateUserRequest struct {
 	Field        string `json:"field"`
 	Role         Role   `json:"role"`
 	DepartmentID uint   `json:"department_id"`
+	LocationID   uint   `json:"location_id"`
 	Status       Status `json:"status"`
 }
 type UpdateUserRequest struct {
@@ -124,6 +123,7 @@ type UpdateUserRequest struct {
 	FullName     string `json:"full_name"`
 	Field        string `json:"field"`
 	DepartmentID uint   `json:"department_id"`
+	LocationID   uint   `json:"location_id"`
 	Role         Role   `json:"role"`
 	Status       Status `json:"status"`
 }
@@ -136,4 +136,9 @@ type ResetPasswordRequest struct {
 }
 type GetAllUserRequest struct {
 	PaginationRequest
+}
+
+type AssignLocationRequest struct {
+	Id         uint `json:"id"`
+	LocationId uint `json:"locationId"`
 }

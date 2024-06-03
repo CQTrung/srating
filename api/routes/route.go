@@ -5,6 +5,8 @@ import (
 
 	"srating/api/middlewares"
 	"srating/api/routes/admin"
+
+	// "srating/api/routes/manager"
 	"srating/api/routes/public"
 	"srating/bootstrap"
 
@@ -24,6 +26,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, router *gin.Engine, db *go
 
 	protectedRouter := apiV1Router.Group("")
 	adminAPIRouter := protectedRouter.Group("")
+	// managerAPIRouter := protectedRouter.Group("")
 
 	// All Admin API
 	adminAPIRouter.Use(middlewares.JwtAuthMiddleware(env.AccessTokenSecret))

@@ -5,5 +5,5 @@ import (
 )
 
 type DashboardService interface {
-	Dashboard(c context.Context) (map[string]int64, error)
+	Dashboard(c context.Context,location uint) (map[string]int64, error)
 }

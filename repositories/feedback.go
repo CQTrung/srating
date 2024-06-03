@@ -26,7 +26,7 @@ func (r *feedbackRepository) CreateFeedback(c context.Context, feedback *domain.
 	return db.Save(feedback).Error
 }
 
-func (r *feedbackRepository) GetAllFeedback(c context.Context, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
+func (r *feedbackRepository) GetAllFeedback(c context.Context,idLocation uint, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
 	feedbacks := []*domain.Feedback{}
 	total := int64(0)
 	start := time.Unix(input.StartDate, 0)
@@ -44,6 +44,12 @@ func (r *feedbackRepository) GetAllFeedback(c context.Context, input domain.GetA
 	if input.EndDate != 0 {
 		query = query.Where("created_at <= ?", end)
 	}
+
+	// Apply location filter if present
+	if idLocation != 0 {
+		query = query.Joins("JOIN users ON users.id = feedbacks.user_id").Where("users.location_id = ?", idLocation)
+	}
+
 	if err := query.Count(&total).Error; err != nil {
 		return 0, 0, nil, err
 	}

@@ -31,4 +31,5 @@ func NewUserRouter(env *bootstrap.Env, timeout time.Duration, group *gin.RouterG
 	userGroup.POST("/change-password", fc.ChangePassword)
 	userGroup.DELETE("/employees/:id", fc.DeleteEmployee)
 	userGroup.POST("/reset-password", fc.ResetPassword)
+	userGroup.POST("/assign-location", fc.AssignLocation)
 }

@@ -96,9 +96,11 @@ func (uc *UserController) GetAllEmployee(c *gin.Context) {
 	rest.AssertNil(err)
 	user, err := uc.UserService.GetUserByID(c, uint(userID))
 	rest.AssertNil(err)
-	if user.Role != domain.AdminRole {
+
+	if user.Role != domain.AdminRole && user.Role != domain.ManagerRole {
 		rest.AssertNil(errors.New("permission denied"))
 	}
+
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	if page <= 0 {
@@ -113,7 +115,7 @@ func (uc *UserController) GetAllEmployee(c *gin.Context) {
 			Page:  page,
 		},
 	}
-	total, totalCount, users, err := uc.UserService.GetAllEmployee(c, params)
+	total, totalCount, users, err := uc.UserService.GetAllEmployee(c, user.LocationID, params)
 	rest.AssertNil(err)
 	uc.SendCustomData(c, map[string]interface{}{
 		"status":     "success",
@@ -205,6 +207,22 @@ func (uc *UserController) ResetPassword(c *gin.Context) {
 	err := c.ShouldBindJSON(&body)
 	rest.AssertNil(err)
 	err = uc.UserService.ResetPassword(c, body.ID)
+	rest.AssertNil(err)
+	uc.Success(c)
+}
+
+// AssignLocation
+// @Router /users/assign-location [post]
+// @Tags user
+// @Param payload body domain.ResetPasswordRequest true "payload"
+// @Summary Assign location
+// @Security ApiKeyAuth
+// @Success 200 {object} string
+func (uc *UserController) AssignLocation(c *gin.Context) {
+	body := &domain.AssignLocationRequest{}
+	err := c.ShouldBindJSON(&body)
+	rest.AssertNil(err)
+	err = uc.UserService.AssignToLocation(c, *body)
 	rest.AssertNil(err)
 	uc.Success(c)
 }

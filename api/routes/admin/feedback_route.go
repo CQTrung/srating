@@ -19,9 +19,12 @@ func NewFeedbackRouter(env *bootstrap.Env, timeout time.Duration, group *gin.Rou
 		mr   = repositories.NewFeedbackRepository(db)
 		fcs  = services.NewFeedbackCategoryService(fbcr, timeout)
 		mu   = services.NewFeedbackService(mr, fcs, timeout)
+		ur   = repositories.NewUserRepository(db)
+		us   = services.NewUserService(ur, timeout)
 	)
 	fc := controllers.FeedbackController{
 		FeedbackService: mu,
+		UserService:     us,
 		Env:             env,
 	}
 	group.GET("/feedbacks", fc.GetAllFeedback)

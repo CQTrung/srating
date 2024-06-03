@@ -57,20 +57,20 @@ func JwtAuthMiddleware(secret string) gin.HandlerFunc {
 			return
 		}
 
-		location, err := utils.ExtractLocationFromToken(tokenString, secret)
-		if err != nil {
-			errResponse := rest.Response{
-				Status:  "error",
-				Message: "Can't extract user location",
-			}
-			c.JSON(http.StatusUnauthorized, errResponse)
-			c.Abort()
-			return
-		}
+		// location, err := utils.ExtractLocationFromToken(tokenString, secret)
+		// if err != nil {
+		// 	errResponse := rest.Response{
+		// 		Status:  "error",
+		// 		Message: "Can't extract user location",
+		// 	}
+		// 	c.JSON(http.StatusUnauthorized, errResponse)
+		// 	c.Abort()
+		// 	return
+		// }
 
 		c.Set("x-user-id", userID)
 		c.Set("x-user-role", role)
-		c.Set("x-user-location", location)
+		// c.Set("x-user-location", location)
 
 		c.Next()
 	}

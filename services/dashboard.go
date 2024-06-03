@@ -25,7 +25,7 @@ func NewDashboardService(feedbackCategoryService domain.FeedbackCategoryService,
 	}
 }
 
-func (u *dashboardService) Dashboard(c context.Context) (map[string]int64, error) {
+func (u *dashboardService) Dashboard(c context.Context,locationId uint) (map[string]int64, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 	resultByType, err := u.feedbackCategoryService.CountFeedbackByType(ctx)
@@ -39,12 +39,12 @@ func (u *dashboardService) Dashboard(c context.Context) (map[string]int64, error
 		return nil, err
 	}
 	mapResult := make(map[string]int64, 8)
-	userByType, err := u.userService.CountUserByRole(ctx)
+	userByType, err := u.userService.CountUserByRole(ctx,locationId)
 	if err != nil {
 		utils.LogError(err, "Failed to get user by type")
 		return nil, err
 	}
-	totalField, err := u.userService.CountTotalField(ctx)
+	totalField, err := u.userService.CountTotalField(ctx,locationId)
 	if err != nil {
 		utils.LogError(err, "Failed to get total field")
 		return nil, err

@@ -43,10 +43,10 @@ func (uu *userService) ChangeStatus(c context.Context, id uint, status domain.St
 	return nil
 }
 
-func (uu *userService) GetAllEmployee(c context.Context, input domain.GetAllUserRequest) (int64, int64, []*domain.User, error) {
+func (uu *userService) GetAllEmployee(c context.Context, idLocation uint, input domain.GetAllUserRequest) (int64, int64, []*domain.User, error) {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	total, totalCount, users, err := uu.userRepository.GetAllEmployee(ctx, input)
+	total, totalCount, users, err := uu.userRepository.GetAllEmployee(ctx, idLocation, input)
 	if err != nil {
 		utils.LogError(err, "Failed to get all employee")
 		return 0, 0, nil, err
@@ -54,10 +54,10 @@ func (uu *userService) GetAllEmployee(c context.Context, input domain.GetAllUser
 	return total, totalCount, users, nil
 }
 
-func (uu *userService) CountUserByRole(c context.Context) (map[string]int64, error) {
+func (uu *userService) CountUserByRole(c context.Context,locationId uint) (map[string]int64, error) {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	users, err := uu.userRepository.CountUserByRole(ctx)
+	users, err := uu.userRepository.CountUserByRole(ctx,locationId)
 	if err != nil {
 		utils.LogError(err, "Failed to get all employee")
 		return nil, err
@@ -77,10 +77,10 @@ func (uu *userService) CountUserByRole(c context.Context) (map[string]int64, err
 	return mapResult, nil
 }
 
-func (uu *userService) CountTotalField(c context.Context) (int64, error) {
+func (uu *userService) CountTotalField(c context.Context,locationId uint) (int64, error) {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	count, err := uu.userRepository.CountTotalField(ctx)
+	count, err := uu.userRepository.CountTotalField(ctx,locationId)
 	if err != nil {
 		utils.LogError(err, "Failed to get total field")
 		return 0, err
@@ -177,12 +177,12 @@ func (uu *userService) ResetPassword(c context.Context, id uint) error {
 	return nil
 }
 
-func (uu *userService) AssignToLocation(c context.Context, idUser uint, idLocation uint) error {
+func (uu *userService) AssignToLocation(c context.Context, input domain.AssignLocationRequest) error {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
 
 	// Directly call the repository method to assign the user to the location
-	if err := uu.userRepository.AssignToLocation(ctx, idUser, idLocation); err != nil {
+	if err := uu.userRepository.AssignToLocation(ctx, input); err != nil {
 		utils.LogError(err, "Failed to assign user to location")
 		return err
 	}

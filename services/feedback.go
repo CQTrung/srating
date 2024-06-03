@@ -66,7 +66,7 @@ func (u *feedbackService) CreateFeedbackV2(c context.Context, input *domain.Feed
 	return nil
 }
 
-func (u *feedbackService) GetAllFeedback(c context.Context, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
+func (u *feedbackService) GetAllFeedback(c context.Context,idLocation uint, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 	if input.Limit < 0 {
@@ -75,7 +75,7 @@ func (u *feedbackService) GetAllFeedback(c context.Context, input domain.GetAllF
 	if input.Page < 0 {
 		input.Page = 1
 	}
-	total, totalCount, feedbacks, err := u.feedbackRepository.GetAllFeedback(ctx, input)
+	total, totalCount, feedbacks, err := u.feedbackRepository.GetAllFeedback(ctx,idLocation, input)
 	if err != nil {
 		utils.LogError(err, "Failed to get all feedback")
 		return 0, 0, nil, err

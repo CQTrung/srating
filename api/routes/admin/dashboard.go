@@ -23,6 +23,7 @@ func NewDashboardRouter(env *bootstrap.Env, timeout time.Duration, group *gin.Ro
 	)
 	fc := controllers.DashboardController{
 		DashboardService: dbs,
+		UserService:      us,
 		Env:              env,
 	}
 	group.GET("/dashboard", fc.Dashboard)
