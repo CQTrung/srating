@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func ManagerAuthMiddleware(secret string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		JwtAuthMiddleware(secret)(c)
@@ -16,7 +15,7 @@ func ManagerAuthMiddleware(secret string) gin.HandlerFunc {
 		if role, ok := userRole.(string); !ok || role != "manager" {
 			response := rest.Response{
 				Status:  "error",
-				Message: "You are not manager", 
+				Message: "You are not manager",
 			}
 			c.JSON(http.StatusForbidden, response)
 			c.Abort()
