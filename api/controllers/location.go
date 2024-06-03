@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"net/http"
 	"strconv"
 
 	"srating/bootstrap"
@@ -33,7 +32,6 @@ func (t *LocationController) CreateLocation(c *gin.Context) {
 	rest.AssertNil(err)
 	t.Success(c)
 }
-
 
 // GetAllLocation
 // @Router /locations [get]
@@ -78,18 +76,10 @@ func (t *LocationController) GetAllLocation(c *gin.Context) {
 func (t *LocationController) GetLocationDetail(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid location ID"})
-		return
-	}
-
+	rest.AssertNil(err)
 	result, err := t.LocationService.GetLocationDetail(c, uint(id))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"status": "success", "data": result})
+	rest.AssertNil(err)
+	t.SendData(c, result)
 }
 
 // UpdateLocation
