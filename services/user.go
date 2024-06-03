@@ -176,3 +176,16 @@ func (uu *userService) ResetPassword(c context.Context, id uint) error {
 	}
 	return nil
 }
+
+func (uu *userService) AssignToLocation(c context.Context, idUser uint, idLocation uint) error {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+
+	// Directly call the repository method to assign the user to the location
+	if err := uu.userRepository.AssignToLocation(ctx, idUser, idLocation); err != nil {
+		utils.LogError(err, "Failed to assign user to location")
+		return err
+	}
+
+	return nil
+}

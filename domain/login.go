@@ -16,6 +16,7 @@ type LoginResponse struct {
 	Counter      string      `json:"counter"`
 	Avatar       *Media      `json:"media"`
 	Department   *Department `json:"department"`
+	Location     *Location   `json:"location"`
 	Role         Role        `json:"role"`
 	Status       Status      `json:"status"`
 	AccessToken  string      `json:"access_token"`

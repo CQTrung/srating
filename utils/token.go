@@ -84,3 +84,18 @@ func ExtractRoleFromToken(requestToken, secret string) (string, error) {
 
 	return claims["role"].(string), nil
 }
+
+func ExtractLocationFromToken(requestToken, secret string) (string, error) {
+	token, err := ParseJWTToken(requestToken, secret)
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	if !ok && !token.Valid {
+		return "", fmt.Errorf("invalid Token")
+	}
+
+	return claims["location"].(string), nil
+}

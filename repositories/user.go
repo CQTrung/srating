@@ -67,6 +67,7 @@ func (r *userRepository) GetAllEmployee(c context.Context, input domain.GetAllUs
 	return total, totalCount, users, nil
 }
 
+
 func (r *userRepository) CountUserByRole(c context.Context) ([]*domain.GetUserByRoleResponse, error) {
 	result := []*domain.GetUserByRoleResponse{}
 	query := r.GetDB(c)
@@ -116,4 +117,26 @@ func (r *userRepository) ResetPassword(c context.Context, id uint, newPassword s
 		return errors.New("no rows were updated")
 	}
 	return nil
+}
+
+func (r *userRepository) AssignToLocation(c context.Context, idUser uint, idLocation uint) error {
+    // Fetch the user by ID
+    var user domain.User
+    if err := r.GetDB(c).First(&user, idUser).Error; err != nil {
+        return err // Return error if user not found
+    }
+
+    // Fetch the location by ID
+    var location domain.Location
+    if err := r.GetDB(c).First(&location, idLocation).Error; err != nil {
+        return err // Return error if location not found
+    }
+
+    // Assign the location to the user
+    user.LocationID = idLocation
+    if err := r.GetDB(c).Model(&user).Update("location_id", idLocation).Error; err != nil {
+        return err // Return error if update fails
+    }
+
+    return nil
 }

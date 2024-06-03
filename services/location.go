@@ -10,13 +10,13 @@ import (
 
 type locationService struct {
 	locationRepository domain.LocationRepository
-	contextTimeout       time.Duration
+	contextTimeout     time.Duration
 }
 
 func NewLocationService(locationRepository domain.LocationRepository, timeout time.Duration) domain.LocationService {
 	return &locationService{
 		locationRepository: locationRepository,
-		contextTimeout:       timeout,
+		contextTimeout:     timeout,
 	}
 }
 

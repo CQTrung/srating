@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"net/http"
 	"strconv"
 
 	"srating/bootstrap"
@@ -12,7 +13,7 @@ import (
 
 type LocationController struct {
 	LocationService domain.LocationService
-	Env               *bootstrap.Env
+	Env             *bootstrap.Env
 	*rest.JSONRender
 }
 
@@ -25,9 +26,10 @@ type LocationController struct {
 // @Security ApiKeyAuth
 // @Success 200 {object} string
 func (t *LocationController) CreateLocation(c *gin.Context) {
-	input := &domain.Location{}
-	rest.AssertNil(c.ShouldBindJSON(&input))
-	err := t.LocationService.CreateLocation(c, input)
+	var input = &domain.Location{}
+	err := c.ShouldBindJSON(&input)
+	rest.AssertNil(err)
+	err = t.LocationService.CreateLocation(c, input)
 	rest.AssertNil(err)
 	t.Success(c)
 }
@@ -73,11 +75,20 @@ func (t *LocationController) GetAllLocation(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Success 200 {object} string
 func (t *LocationController) GetLocationDetail(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	rest.AssertNil(err)
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid location ID"})
+		return
+	}
+
 	result, err := t.LocationService.GetLocationDetail(c, uint(id))
-	rest.AssertNil(err)
-	t.SendData(c, result)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success", "data": result})
 }
 
 // UpdateLocation

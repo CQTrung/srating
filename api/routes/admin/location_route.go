@@ -20,10 +20,11 @@ func NewLocationRouter(env *bootstrap.Env, timeout time.Duration, group *gin.Rou
 	)
 	fc := controllers.LocationController{
 		LocationService: mu,
-		Env:               env,
+		Env:             env,
 	}
 	locationGroup := group.Group("/locations")
 	locationGroup.GET("", fc.GetAllLocation)
+	locationGroup.GET("/:id", fc.GetLocationDetail)
 	locationGroup.POST("", fc.CreateLocation)
 	locationGroup.PUT("", fc.UpdateLocation)
 	locationGroup.DELETE("/:id", fc.DeleteLocation)

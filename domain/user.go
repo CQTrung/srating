@@ -47,12 +47,15 @@ type User struct {
 	Feedbacks    []*Feedback `json:"feedbacks,omitempty" gorm:"foreignKey:UserID"`
 	Role         Role        `json:"role" gorm:"column:role"`
 	Status       Status      `json:"status" gorm:"column:status"`
+	LocationID   uint        `json:"location_id" gorm:"column:location_id"`
+	Location     *Location   `json:"location" gorm:"foreignKey:LocationID"`
 }
 
 type UserService interface {
 	GetUserByID(c context.Context, id uint) (*User, error)
 	ChangeStatus(c context.Context, id uint, status Status) error
 	GetAllEmployee(c context.Context, input GetAllUserRequest) (int64, int64, []*User, error)
+	// GetAllEmployeeByLocation(c context.Context, idLocation uint, input GetAllUserRequest) (int64, int64, []*User, error)
 	CountUserByRole(c context.Context) (map[string]int64, error)
 	CountTotalField(c context.Context) (int64, error)
 	UpdateEmployee(c context.Context, user *User) error
@@ -60,6 +63,7 @@ type UserService interface {
 	CreateUser(c context.Context, user *User) error
 	ChangePassword(c context.Context, id uint, oldPassword, newPassword string) error
 	ResetPassword(c context.Context, id uint) error
+	AssignToLocation(c context.Context, idUser uint, idLocation uint) error
 }
 type UserRepository interface {
 	UpdateUser(c context.Context, user *User) error
@@ -67,12 +71,14 @@ type UserRepository interface {
 	GetUserByUsername(c context.Context, username string) (*User, error)
 	ChangeStatus(c context.Context, id uint, status Status) error
 	GetAllEmployee(c context.Context, input GetAllUserRequest) (int64, int64, []*User, error)
+	// GetAllEmployeeByLocation(c context.Context, idLocation uint, input GetAllUserRequest) (int64, int64, []*User, error)
 	CountUserByRole(c context.Context) ([]*GetUserByRoleResponse, error)
 	CountTotalField(c context.Context) (int64, error)
 	DeleteEmployee(c context.Context, id uint) error
 	CreateUser(c context.Context, user *User) error
 	ChangePassword(c context.Context, id uint, oldPassword, newPassword string) error
 	ResetPassword(c context.Context, id uint, newPassword string) error
+	AssignToLocation(c context.Context, idUser uint, idLocation uint) error
 }
 type GetUserByIDResponse struct {
 	ID           uint        `json:"id"`
@@ -86,6 +92,8 @@ type GetUserByIDResponse struct {
 	Avatar       *Media      `json:"media"`
 	DepartmentID uint        `json:"department_id"`
 	Department   *Department `json:"department"`
+	LocationID   uint        `json:"location_id"`
+	Location     *Location   `json:"location"`
 	Role         Role        `json:"role"`
 	Status       Status      `json:"status"`
 }
