@@ -5,24 +5,24 @@ import "github.com/spf13/viper"
 const configFile = ".env"
 
 type Config struct {
-	AppEnv                  string `mapstructure:"APP_ENV"`
-	Host                    string `mapstructure:"HOST"`
-	ServerAddress           string `mapstructure:"SERVER_ADDRESS"`
-	ContextTimeout          int    `mapstructure:"CONTEXT_TIMEOUT"`
-	DBUrl                   string `mapstructure:"DB_URL"`
-	AccessTokenExpiryHour   int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOUR"`
-	RefreshTokenExpiryHour  int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
-	RememberTokenExpiryHour int    `mapstructure:"REMEMBER_TOKEN_EXPIRY_HOUR"`
 	AccessTokenSecret       string `mapstructure:"ACCESS_TOKEN_SECRET"`
+	RedisPassword           string `mapstructure:"REDIS_PASSWORD"`
 	RefreshTokenSecret      string `mapstructure:"REFRESH_TOKEN_SECRET"`
 	GinMode                 string `mapstructure:"GIN_MODE"`
+	DBUrl                   string `mapstructure:"DB_URL"`
+	AppEnv                  string `mapstructure:"APP_ENV"`
+	EmailSenderAddress      string `mapstructure:"EMAIL_SENDER_ADDRESS"`
+	EmailSenderName         string `mapstructure:"EMAIL_SENDER_NAME"`
+	EmailSenderPassword     string `mapstructure:"EMAIL_SENDER_PASSWORD"`
+	ServerAddress           string `mapstructure:"SERVER_ADDRESS"`
+	Host                    string `mapstructure:"HOST"`
 	BaseURL                 string `mapstructure:"BASE_URL"`
 	RedisURL                string `mapstructure:"REDIS_URL"`
-	RedisPassword           string `mapstructure:"REDIS_PASSWORD"`
+	ContextTimeout          int    `mapstructure:"CONTEXT_TIMEOUT"`
 	RedisDB                 int    `mapstructure:"REDIS_DB"`
-	EmailSenderName         string `mapstructure:"EMAIL_SENDER_NAME"`
-	EmailSenderAddress      string `mapstructure:"EMAIL_SENDER_ADDRESS"`
-	EmailSenderPassword     string `mapstructure:"EMAIL_SENDER_PASSWORD"`
+	RememberTokenExpiryHour int    `mapstructure:"REMEMBER_TOKEN_EXPIRY_HOUR"`
+	RefreshTokenExpiryHour  int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
+	AccessTokenExpiryHour   int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOUR"`
 }
 
 // NewEnv creates and returns a new Env object.

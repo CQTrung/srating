@@ -92,10 +92,11 @@ func ExtractLocationFromToken(requestToken, secret string) (string, error) {
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-
-	if !ok && !token.Valid {
+	if !ok {
 		return "", fmt.Errorf("invalid Token")
 	}
-
+	if !token.Valid {
+		return "", fmt.Errorf("invalid Token")
+	}
 	return claims["location"].(string), nil
 }
