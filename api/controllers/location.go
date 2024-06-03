@@ -32,7 +32,6 @@ func (t *LocationController) CreateLocation(c *gin.Context) {
 	err = t.LocationService.CreateLocation(c, input)
 	rest.AssertNil(err)
 	t.Success(c)
-	//:v
 }
 
 
