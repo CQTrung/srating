@@ -101,15 +101,19 @@ func (uc *UserController) GetAllEmployee(c *gin.Context) {
 		rest.AssertNil(errors.New("permission denied"))
 	}
 
-	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
+	userId, _ := strconv.Atoi(c.Query("user_id"))
+	locationID, _ := strconv.Atoi(c.Query("location_id"))
 	if page <= 0 {
 		page = 1
 	}
-	if limit <= 0 {
-		limit = 10
-	}
+	// if limit <= 0 {
+	// 	limit = 10
+	// }
 	params := domain.GetAllUserRequest{
+		UserID:     uint(userId),
+		LocationID: uint(locationID),
 		PaginationRequest: domain.PaginationRequest{
 			Limit: limit,
 			Page:  page,

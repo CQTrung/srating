@@ -13,7 +13,7 @@ import (
 
 type LocationController struct {
 	LocationService domain.LocationService
-	UserService domain.UserService
+	UserService     domain.UserService
 	Env             *bootstrap.Env
 	*rest.JSONRender
 }
@@ -65,7 +65,9 @@ func (t *LocationController) GetAllLocation(c *gin.Context) {
 	}
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	page, _ := strconv.Atoi(c.Query("page"))
+	locationId, _ := strconv.Atoi(c.Query("location_id"))
 	input := domain.GetAllLocationRequest{
+		LocationID: uint(locationId),
 		PaginationRequest: domain.PaginationRequest{
 			Limit: limit,
 			Page:  page,

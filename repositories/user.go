@@ -50,11 +50,24 @@ func (r *userRepository) ChangeStatus(c context.Context, id uint, status domain.
 }
 
 func (r *userRepository) GetAllEmployee(c context.Context, idLocation uint, input domain.GetAllUserRequest) (int64, int64, []*domain.User, error) {
-	query := r.GetDB(c).Model(&domain.User{}).Preload("Avatar").Preload("Department").Preload("Location").Where("role = ?", domain.EmployeeRole).Order("updated_at desc")
+	query := r.GetDB(c).Model(&domain.User{}).Preload("Avatar").Preload("Department").Preload("Location").Order("updated_at desc")
 
-	// Add condition for idLocation if it is non-zero
+	// Add condition for UserID if it has a value
+	if input.UserID != 0 {
+		query = query.Where("id = ?", input.UserID)
+	}
+
+	// Add condition for idLocation and input.LocationID
 	if idLocation != 0 {
-		query = query.Where("location_id = ?", idLocation)
+		if idLocation == input.LocationID {
+			query = query.Where("location_id = ?", idLocation)
+		} else if input.LocationID != 0 {
+			query = query.Where("location_id = 0")
+		} else {
+			query = query.Where("location_id = ?", idLocation)
+		}
+	} else if input.LocationID != 0 {
+		query = query.Where("location_id = ?", input.LocationID)
 	}
 
 	// Count the total number of users matching the conditions
@@ -63,22 +76,21 @@ func (r *userRepository) GetAllEmployee(c context.Context, idLocation uint, inpu
 		return 0, 0, nil, err
 	}
 
-	// Apply pagination and order by updated_at desc
-	users := []*domain.User{}
-	query = query.Scopes(r.Paginate(input.Page, input.Limit)).Order("updated_at desc")
+	// Apply pagination only if input.Limit is greater than 0
+	if input.Limit > 0 {
+		query = query.Scopes(r.Paginate(input.Page, input.Limit))
+	}
 
-	// Find the users with the current conditions and pagination
+	// Order by updated_at desc
+	query = query.Order("updated_at desc")
+
+	// Find the users with the current conditions
+	users := []*domain.User{}
 	if err := query.Find(&users).Error; err != nil {
 		return 0, 0, nil, err
 	}
 
-	// Count the total number of users after applying pagination (should be the same as total)
-	totalCount := int64(0)
-	if err := query.Count(&totalCount).Error; err != nil {
-		return 0, 0, nil, err
-	}
-
-	return total, totalCount, users, nil
+	return total, int64(len(users)), users, nil
 }
 
 // func (r *userRepository) CountUserByRole(c context.Context, idLocation uint) ([]*domain.GetUserByRoleResponse, error) {

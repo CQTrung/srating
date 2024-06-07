@@ -54,10 +54,10 @@ func (uu *userService) GetAllEmployee(c context.Context, idLocation uint, input 
 	return total, totalCount, users, nil
 }
 
-func (uu *userService) CountUserByRole(c context.Context,locationId uint) (map[string]int64, error) {
+func (uu *userService) CountUserByRole(c context.Context, locationId uint) (map[string]int64, error) {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	users, err := uu.userRepository.CountUserByRole(ctx,locationId)
+	users, err := uu.userRepository.CountUserByRole(ctx, locationId)
 	if err != nil {
 		utils.LogError(err, "Failed to get all employee")
 		return nil, err
@@ -77,10 +77,10 @@ func (uu *userService) CountUserByRole(c context.Context,locationId uint) (map[s
 	return mapResult, nil
 }
 
-func (uu *userService) CountTotalField(c context.Context,locationId uint) (int64, error) {
+func (uu *userService) CountTotalField(c context.Context, locationId uint) (int64, error) {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	count, err := uu.userRepository.CountTotalField(ctx,locationId)
+	count, err := uu.userRepository.CountTotalField(ctx, locationId)
 	if err != nil {
 		utils.LogError(err, "Failed to get total field")
 		return 0, err
@@ -91,7 +91,7 @@ func (uu *userService) CountTotalField(c context.Context,locationId uint) (int64
 func (uu *userService) UpdateEmployee(c context.Context, user *domain.User) error {
 	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
 	defer cancel()
-	user.Role = domain.EmployeeRole
+	// user.Role = domain.EmployeeRole
 	if err := uu.userRepository.UpdateUser(ctx, user); err != nil {
 		utils.LogError(err, "Failed to update employee")
 		return err
@@ -121,7 +121,11 @@ func (uu *userService) CreateUser(c context.Context, user *domain.User) error {
 		return rest.ErrValidation
 	}
 	user.Phone = phone
-	user.Role = domain.EmployeeRole
+	// user.Role = domain.EmployeeRole
+	// if user.Role == domain.AdminRole {
+	// 	user.LocationID = 0
+	// }
+
 	password := "123456"
 	password, err := utils.GenerateHashPassword(password)
 	user.Password = password

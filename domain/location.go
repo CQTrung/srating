@@ -25,5 +25,6 @@ type LocationRepository interface {
 	DeleteLocation(c context.Context, id uint) error
 }
 type GetAllLocationRequest struct {
+	LocationID uint `json:"location_id"`
 	PaginationRequest
 }

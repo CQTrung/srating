@@ -31,20 +31,33 @@ func (r *locationRepository) GetAllLocation(c context.Context, input domain.GetA
 
 	query := r.GetDB(c).Model(&domain.Location{})
 
+	if input.LocationID != 0 {
+		query = query.Where("id = ?", input.LocationID)
+	}
+
+	// Count the total number of locations matching the conditions
 	if err := query.Count(&total).Error; err != nil {
 		return 0, 0, nil, err
 	}
-	query = query.Scopes(r.Paginate(input.Page, input.Limit)).Order("updated_at desc")
+
+	// Apply pagination only if input.Limit is greater than 0
+	if input.Limit > 0 {
+		query = query.Scopes(r.Paginate(input.Page, input.Limit))
+	}
+
+	query = query.Order("updated_at desc")
+
+	// Find the locations with the current conditions and pagination
 	if err := query.Find(&locations).Error; err != nil {
 		return 0, 0, nil, err
 	}
-	totalCount := int64(0)
-	if err := query.Count(&totalCount).Error; err != nil {
-		return 0, 0, nil, err
-	}
+
+	// The totalCount should be equal to the total because we want all records if no limit is applied
+	totalCount := total
 
 	return total, totalCount, locations, nil
 }
+
 
 func (r *locationRepository) GetLocationDetail(c context.Context, id uint) (*domain.Location, error) {
 	var location domain.Location

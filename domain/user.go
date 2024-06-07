@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"time"
 )
 
 type Role string
@@ -49,6 +50,36 @@ type User struct {
 	Status       Status      `json:"status" gorm:"column:status"`
 	LocationID   uint        `json:"location_id" gorm:"column:location_id"`
 	Location     *Location   `json:"location" gorm:"foreignKey:LocationID"`
+}
+
+type UserResponse struct {
+	ID           uint        `json:"id"`
+	CreatedAt    time.Time   `json:"created_at"`
+	UpdatedAt    time.Time   `json:"updated_at"`
+	Username     string      `json:"username"`
+	Phone        string      `json:"phone"`
+	Email        string      `json:"email"`
+	ShortName    string      `json:"short_name"`
+	FullName     string      `json:"full_name"`
+	Field        string      `json:"field"`
+	MediaID      uint        `json:"media_id"`
+	Avatar       *Media      `json:"media"`
+	DepartmentID uint        `json:"department_id"`
+	Department   *Department `json:"department"`
+	Counter      string      `json:"counter"`
+	Feedbacks    []*Feedback `json:"feedbacks,omitempty"`
+	Role         Role        `json:"role"`
+	Status       Status      `json:"status"`
+	LocationID   uint        `json:"location_id"`
+	Location     *Location   `json:"location"`
+}
+
+type UserReponse struct {
+	ID         uint      `json:"id"`
+	FullName   string    `json:"full_name" gorm:"column:full_name" validate:"required"`
+	Role       Role      `json:"role" gorm:"column:role"`
+	LocationID uint      `json:"location_id" gorm:"column:location_id"`
+	Location   *Location `json:"location" gorm:"foreignKey:LocationID"`
 }
 
 type UserService interface {
@@ -135,6 +166,8 @@ type ResetPasswordRequest struct {
 	ID uint `json:"id"`
 }
 type GetAllUserRequest struct {
+	UserID     uint `json:"user_id"`
+	LocationID uint `json:"location_id"`
 	PaginationRequest
 }
 

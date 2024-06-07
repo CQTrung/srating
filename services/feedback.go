@@ -66,7 +66,7 @@ func (u *feedbackService) CreateFeedbackV2(c context.Context, input *domain.Feed
 	return nil
 }
 
-func (u *feedbackService) GetAllFeedback(c context.Context,idLocation uint, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
+func (u *feedbackService) GetAllFeedback(c context.Context,idLocation uint, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.FeedbackReponse, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 	if input.Limit < 0 {

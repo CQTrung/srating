@@ -37,9 +37,9 @@ func (u *locationService) CreateLocation(c context.Context, input *domain.Locati
 func (u *locationService) GetAllLocation(c context.Context, input domain.GetAllLocationRequest) (int64, int64, []*domain.Location, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
-	if input.Limit < 0 {
-		input.Limit = 10
-	}
+	// if input.Limit < 0 {
+	// 	input.Limit = 10
+	// }
 	if input.Page < 0 {
 		input.Page = 1
 	}
