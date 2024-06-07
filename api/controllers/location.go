@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"strconv"
 
 	"srating/bootstrap"
@@ -12,6 +13,7 @@ import (
 
 type LocationController struct {
 	LocationService domain.LocationService
+	UserService domain.UserService
 	Env             *bootstrap.Env
 	*rest.JSONRender
 }
@@ -46,6 +48,21 @@ func (t *LocationController) CreateLocation(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Success 200 {object} string
 func (t *LocationController) GetAllLocation(c *gin.Context) {
+	rawUserID, _ := c.Get("x-user-id")
+
+	userIDStr, ok := rawUserID.(string)
+	if !ok {
+		rest.AssertNil(errors.New("invalid user id"))
+	}
+	userId, err := strconv.Atoi(userIDStr)
+	rest.AssertNil(err)
+
+	user, err := t.UserService.GetUserByID(c, uint(userId))
+	rest.AssertNil(err)
+
+	if user.Role == domain.EmployeeRole {
+		rest.AssertNil(errors.New("permission denied"))
+	}
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	input := domain.GetAllLocationRequest{

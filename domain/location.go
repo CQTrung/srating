@@ -7,7 +7,7 @@ import (
 type Location struct {
 	Model
 	Code string `json:"code" gorm:"code"`
-	Name string `json:"name" gorm:"name"`
+	Name string `json:"org_name" gorm:"name"`
 }
 
 type LocationService interface {

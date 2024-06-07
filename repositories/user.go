@@ -31,7 +31,7 @@ func (r *userRepository) GetUserByID(c context.Context, id uint) (*domain.User, 
 
 func (r *userRepository) GetUserByUsername(c context.Context, username string) (*domain.User, error) {
 	var user *domain.User
-	if err := r.GetDB(c).Model(&domain.User{}).Preload("Avatar").Preload("Department").Where("username = ?", username).First(&user).Error; err != nil {
+	if err := r.GetDB(c).Model(&domain.User{}).Preload("Avatar").Preload("Department").Preload("Location").Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil

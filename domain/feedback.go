@@ -7,6 +7,7 @@ import (
 type Feedback struct {
 	HardModel
 	UserID             uint                `json:"user_id" gorm:"column:user_id" validate:"required"`
+	User               *User               `json:"user" gorm:"foreignKey:UserID"`
 	Level              Level               `json:"level" gorm:"column:level"`
 	Note               string              `json:"note" gorm:"column:note"`
 	FeedbackCategories []*FeedbackCategory `json:"feedback_categories" gorm:"foreignkey:FeedbackID"`
@@ -42,9 +43,10 @@ type SearchFeedbackRequest struct {
 	PaginationRequest
 }
 type GetAllFeedbackRequest struct {
-	UserID    uint  `json:"user_id"`
-	Level     Level `json:"level"`
-	StartDate int64 `json:"start_date"`
-	EndDate   int64 `json:"end_date"`
+	UserID     uint  `json:"user_id"`
+	LocationID uint  `json:"location_id"`
+	Level      Level `json:"level"`
+	StartDate  int64 `json:"start_date"`
+	EndDate    int64 `json:"end_date"`
 	PaginationRequest
 }

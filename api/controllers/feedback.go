@@ -64,22 +64,24 @@ func (t *FeedbackController) GetAllFeedback(c *gin.Context) {
 	}
 	userId, err := strconv.Atoi(userIDStr)
 	rest.AssertNil(err)
-	
+
 	user, err := t.UserService.GetUserByID(c, uint(userId))
 	rest.AssertNil(err)
 
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	userID, _ := strconv.Atoi(c.Query("user_id"))
+	locationID, _ := strconv.Atoi(c.Query("location_id"))
 	level, _ := strconv.Atoi(c.Query("level"))
 	startDate, _ := strconv.Atoi(c.Query("start_date"))
 	endDate, _ := strconv.Atoi(c.Query("end_date"))
 
 	input := domain.GetAllFeedbackRequest{
-		UserID:    uint(userID),
-		Level:     domain.Level(level),
-		StartDate: int64(startDate),
-		EndDate:   int64(endDate),
+		UserID:     uint(userID),
+		LocationID: uint(locationID),
+		Level:      domain.Level(level),
+		StartDate:  int64(startDate),
+		EndDate:    int64(endDate),
 		PaginationRequest: domain.PaginationRequest{
 			Limit: limit,
 			Page:  page,

@@ -36,12 +36,12 @@ type User struct {
 	Password     string      `json:"password" gorm:"column:password" validate:"required"`
 	Phone        string      `json:"phone" gorm:"column:phone" validate:"required"`
 	Email        string      `json:"email" gorm:"column:email;unique" validate:"required"`
-	ShortName    string      `json:"short_name" gorm:"column:short_name" validate:"required"`
+	ShortName    string      `json:"short_name" gorm:"column:short_name"`
 	FullName     string      `json:"full_name" gorm:"column:full_name" validate:"required"`
 	Field        string      `json:"field" gorm:"column:field" validate:"required"`
 	MediaID      uint        `json:"media_id" gorm:"column:media_id;default:1"`
 	Avatar       *Media      `json:"media" gorm:"foreignKey:MediaID"`
-	DepartmentID uint        `json:"department_id" gorm:"department_id" validate:"required"`
+	DepartmentID uint        `json:"department_id" gorm:"department_id"`
 	Department   *Department `json:"department" gorm:"foreignKey:DepartmentID"`
 	Counter      string      `json:"counter" gorm:"column:counter"`
 	Feedbacks    []*Feedback `json:"feedbacks,omitempty" gorm:"foreignKey:UserID"`

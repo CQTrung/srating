@@ -17,9 +17,12 @@ func NewLocationRouter(env *bootstrap.Env, timeout time.Duration, group *gin.Rou
 	var (
 		mr = repositories.NewLocationRepository(db)
 		mu = services.NewLocationService(mr, timeout)
+		ur = repositories.NewUserRepository(db)
+		us = services.NewUserService(ur, timeout)
 	)
 	fc := controllers.LocationController{
 		LocationService: mu,
+		UserService:     us,
 		Env:             env,
 	}
 	locationGroup := group.Group("/locations")

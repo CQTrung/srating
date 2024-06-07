@@ -26,12 +26,12 @@ func (r *feedbackRepository) CreateFeedback(c context.Context, feedback *domain.
 	return db.Save(feedback).Error
 }
 
-func (r *feedbackRepository) GetAllFeedback(c context.Context,idLocation uint, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
+func (r *feedbackRepository) GetAllFeedback(c context.Context, idLocation uint, input domain.GetAllFeedbackRequest) (int64, int64, []*domain.Feedback, error) {
 	feedbacks := []*domain.Feedback{}
 	total := int64(0)
 	start := time.Unix(input.StartDate, 0)
 	end := time.Unix(input.EndDate, 0)
-	query := r.GetDB(c).Model(&domain.Feedback{}).Preload("FeedbackCategories").Preload("FeedbackCategories.Category")
+	query := r.GetDB(c).Model(&domain.Feedback{}).Preload("FeedbackCategories").Preload("FeedbackCategories.Category").Preload("User")
 	if input.UserID != 0 {
 		query = query.Where("user_id = ?", input.UserID)
 	}
@@ -46,8 +46,18 @@ func (r *feedbackRepository) GetAllFeedback(c context.Context,idLocation uint, i
 	}
 
 	// Apply location filter if present
+	query = query.Joins("JOIN users ON users.id = feedbacks.user_id")
+
 	if idLocation != 0 {
-		query = query.Joins("JOIN users ON users.id = feedbacks.user_id").Where("users.location_id = ?", idLocation)
+		if idLocation == input.LocationID {
+			query = query.Where("users.location_id = ?", idLocation)
+		} else if input.LocationID != 0 {
+			query = query.Where("users.location_id = 0")
+		} else {
+			query = query.Where("users.location_id = ?", idLocation)
+		}
+	} else if input.LocationID != 0 {
+		query = query.Where("users.location_id = ?", input.LocationID)
 	}
 
 	if err := query.Count(&total).Error; err != nil {
